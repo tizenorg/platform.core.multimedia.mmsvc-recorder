@@ -51,6 +51,9 @@ typedef const char* STRING;
 #define mmsvc_recorder_msg_get_array(param, buf) \
 	mmsvc_core_msg_json_deserialize(#param, buf, param, NULL)
 
+#define mmsvc_recorder_msg_get_pointer(param, buf) \
+	mmsvc_core_msg_json_deserialize_type(#param, buf, &param, NULL, MUSED_TYPE_POINTER)
+
 #define mmsvc_recorder_msg_get_error_e(param, buf, e) \
 	mmsvc_core_msg_json_deserialize(#param, buf, &param, &e)
 

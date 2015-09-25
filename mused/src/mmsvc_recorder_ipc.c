@@ -52,7 +52,6 @@ bool mmsvc_recorder_ipc_make_tbm(mmsvc_recorder_transport_info_s *transport_info
 		return FALSE;
 	}
 
-	transport_info->bo = NULL;
 	transport_info->bo = tbm_bo_alloc(bufmgr, transport_info->data_size, TBM_BO_DEFAULT);
 
 	if(transport_info->bo == NULL) {
@@ -115,7 +114,7 @@ MAPPING_FAIL:
 	return FALSE;
 }
 
-void mmsvc_recorder_unref_tbm(mmsvc_recorder_transport_info_s *transport_info)
+void mmsvc_recorder_ipc_unref_tbm(mmsvc_recorder_transport_info_s *transport_info)
 {
 	LOGD("Enter");
 	if (transport_info->bo) {

@@ -125,6 +125,9 @@ typedef struct {
 	tbm_bufmgr bufmgr;
 } mmsvc_recorder_transport_info_s;
 
+typedef struct {
+	tbm_bufmgr bufmgr;
+} mmsvc_recorder_info_s;
 
 #define MMSVC_RECORDER_CB_EVENT	MMSVC_RECORDER_API_MAX + 1
 #define MMSVC_MSG_MAX_LENGTH		256
@@ -134,7 +137,7 @@ bool mmsvc_recorder_ipc_make_tbm(mmsvc_recorder_transport_info_s *transport_info
 int mmsvc_recorder_ipc_export_tbm(mmsvc_recorder_transport_info_s transport_info);
 bool mmsvc_recorder_ipc_init_tbm(mmsvc_recorder_transport_info_s *transport_info);
 int mmsvc_recorder_ipc_import_tbm(mmsvc_recorder_transport_info_s *transport_info);
-void mmsvc_recorder_unref_tbm(mmsvc_recorder_transport_info_s *transport_info);
+void mmsvc_recorder_ipc_unref_tbm(mmsvc_recorder_transport_info_s *transport_info);
 
 #ifdef __cplusplus
 }

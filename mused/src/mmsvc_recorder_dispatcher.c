@@ -119,10 +119,14 @@ void _mmsvc_recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_t
 	int cb_channel = channel;
 	int cb_timestamp = timestamp;
 	mmsvc_recorder_transport_info_s transport_info;
+	mmsvc_recorder_info_s *recorder_data;
 	int tKey = 0;
 	LOGW("Enter");
 
+	/* Initial TBM setting */
 	transport_info.data_size = size;
+	recorder_data = (mmsvc_recorder_info_s *)mmsvc_core_client_get_cust_data(client);
+	transport_info.bufmgr = recorder_data->bufmgr;
 
 	if (mmsvc_recorder_ipc_make_tbm(&transport_info) == FALSE) {
 		LOGE("TBM Init failed");
@@ -132,10 +136,10 @@ void _mmsvc_recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_t
 
 	memcpy(transport_info.bo_handle.ptr, stream, size);
 	tKey = mmsvc_recorder_ipc_export_tbm(transport_info);
-	tbm_bo_unmap(transport_info.bo);
 
 	if(tKey == 0) {
 		LOGE("Create key_info ERROR!!");
+		mmsvc_recorder_ipc_unref_tbm(&transport_info);
 		return;
 	}
 
@@ -147,6 +151,8 @@ void _mmsvc_recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_t
 							    INT, cb_channel,
 							    INT, cb_timestamp,
 							    INT, tKey);
+
+	mmsvc_recorder_ipc_unref_tbm(&transport_info);
 	return;
 }
 
@@ -208,12 +214,14 @@ int recorder_dispatcher_create(Client client)
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_CREATE;
 	recorder_h recorder;
 	intptr_t camera_handle;
+	mmsvc_recorder_info_s *recorder_data;
+	tbm_bufmgr bufmgr;
 	int recorder_type;
 	intptr_t handle;
 	LOGW("Enter");
 	mmsvc_recorder_msg_get(recorder_type, mmsvc_core_client_get_msg(client));
 	if (recorder_type == MMSVC_RECORDER_TYPE_VIDEO) {
-		mmsvc_recorder_msg_get(camera_handle, mmsvc_core_client_get_msg(client));
+		mmsvc_recorder_msg_get_pointer(camera_handle, mmsvc_core_client_get_msg(client));
 		LOGW("video type, camera handle : 0x%x", camera_handle);
 		ret = mmsvc_recorder_create_videorecorder((camera_h)camera_handle, &recorder);
 	} else if (recorder_type == MMSVC_RECORDER_TYPE_AUDIO) {
@@ -222,7 +230,18 @@ int recorder_dispatcher_create(Client client)
 	}
 	handle = (intptr_t)recorder;
 	LOGW("recorder handle : 0x%x, api : %d, client", handle, api, client);
-	mmsvc_recorder_msg_return1(api, ret, client, INT, handle);
+	mmsvc_recorder_msg_return1(api, ret, client, POINTER, handle);
+
+	if (ret == RECORDER_ERROR_NONE) {
+		recorder_data = (mmsvc_recorder_info_s *)g_new(mmsvc_recorder_info_s, sizeof(mmsvc_recorder_info_s));
+		mmsvc_core_ipc_get_bufmgr(&bufmgr);
+		LOGW("bufmgr: 0x%x", bufmgr);
+		if (bufmgr != NULL) {
+			recorder_data->bufmgr = bufmgr;
+		}
+		LOGW("recorder_data->bufmgr: 0x%x", recorder_data->bufmgr);
+		mmsvc_core_client_set_cust_data(client, (void *)recorder_data);
+	}
 
 	return MMSVC_RECORDER_ERROR_NONE;
 }
@@ -232,10 +251,17 @@ int recorder_dispatcher_destroy(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_DESTROY;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_info_s *recorder_data;
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_destroy((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
+
+	recorder_data = (mmsvc_recorder_info_s *)mmsvc_core_client_get_cust_data(client);
+	if (recorder_data != NULL) {
+		g_free(recorder_data);
+		recorder_data = NULL;
+	}
 
 	return MMSVC_RECORDER_ERROR_NONE;
 }
@@ -248,7 +274,7 @@ int recorder_dispatcher_get_state(Client client)
 	recorder_state_e state;
 	int get_state;
 
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_state((recorder_h)handle, &state);
 	get_state = (int)state;
 	LOGW("handle : 0x%x", handle);
@@ -262,7 +288,7 @@ int recorder_dispatcher_prepare(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_PREPARE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_prepare((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -275,7 +301,7 @@ int recorder_dispatcher_unprepare(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNPREPARE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unprepare((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -288,7 +314,7 @@ int recorder_dispatcher_start(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_START;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_start((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -301,7 +327,7 @@ int recorder_dispatcher_pause(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_PAUSE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_pause((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -314,7 +340,7 @@ int recorder_dispatcher_commit(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_COMMIT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_commit((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -327,7 +353,7 @@ int recorder_dispatcher_cancel(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_CANCEL;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_cancel((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -342,7 +368,7 @@ int recorder_dispatcher_set_video_resolution(Client client)
 	int width;
 	int height;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_VIDEO_RESOLUTION;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(width, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(height, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_video_resolution((recorder_h)handle, width, height);
@@ -359,7 +385,7 @@ int recorder_dispatcher_get_video_resolution(Client client)
 	int get_width;
 	int get_height;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_VIDEO_RESOLUTION;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_video_resolution((recorder_h)handle, &get_width, &get_height);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return2(api,
@@ -376,7 +402,7 @@ int recorder_dispatcher_foreach_supported_video_resolution(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_FOREACH_SUPPORTED_VIDEO_RESOLUTION;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_foreach_supported_video_resolution((recorder_h)handle,
 							(recorder_supported_video_resolution_cb)_mmsvc_recorder_disp_foreach_supported_video_resolution_cb,
 							(void *)client);
@@ -392,7 +418,7 @@ int recorder_dispatcher_get_audio_level(Client client)
 	intptr_t handle;
 	double get_level;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_AUDIO_LEVEL;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_audio_level((recorder_h)handle, &get_level);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api,
@@ -409,7 +435,7 @@ int recorder_dispatcher_set_filename(Client client)
 	intptr_t handle;
 	char filename[MMSVC_RECORDER_MSG_MAX_LENGTH] = {0,};
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_FILENAME;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get_string(filename, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_filename((recorder_h)handle, filename);
 	LOGW("handle : 0x%x, filename : %s", handle, filename);
@@ -424,7 +450,7 @@ int recorder_dispatcher_get_filename(Client client)
 	intptr_t handle;
 	char *get_filename;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_FILENAME;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_filename((recorder_h)handle, &get_filename);
 	LOGW("handle : 0x%x, filename : %s", handle, get_filename);
 	mmsvc_recorder_msg_return1(api, ret, client, STRING, get_filename);
@@ -438,7 +464,7 @@ int recorder_dispatcher_set_file_format(Client client)
 	intptr_t handle;
 	int set_format;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_FILE_FORMAT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_format, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_file_format((recorder_h)handle, (recorder_file_format_e)set_format);
 	LOGW("handle : 0x%x, set_format : %d", handle, set_format);
@@ -454,7 +480,7 @@ int recorder_dispatcher_get_file_format(Client client)
 	recorder_file_format_e format;
 	int get_format;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_FILE_FORMAT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_file_format((recorder_h)handle, &format);
 	get_format = (int)format;
 	LOGW("handle : 0x%x, get_format : %d", handle, get_format);
@@ -468,7 +494,7 @@ int recorder_dispatcher_set_state_changed_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_STATE_CHANGED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_state_changed_cb((recorder_h)handle,
 							(recorder_state_changed_cb)_mmsvc_recorder_disp_state_changed_cb,
 							(void *)client);
@@ -483,7 +509,7 @@ int recorder_dispatcher_unset_state_changed_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_STATE_CHANGED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_state_changed_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -496,7 +522,7 @@ int recorder_dispatcher_set_interrupted_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_INTERRUPTED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_interrupted_cb((recorder_h)handle,
 							(recorder_interrupted_cb)_mmsvc_recorder_disp_interrupted_cb,
 							(void *)client);
@@ -511,7 +537,7 @@ int recorder_dispatcher_unset_interrupted_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_INTERRUPTED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_interrupted_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -524,7 +550,7 @@ int recorder_dispatcher_set_audio_stream_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_AUDIO_STREAM_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_audio_stream_cb((recorder_h)handle,
 							(recorder_audio_stream_cb)_mmsvc_recorder_disp_audio_stream_cb,
 							(void *)client);
@@ -539,7 +565,7 @@ int recorder_dispatcher_unset_audio_stream_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_AUDIO_STREAM_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_audio_stream_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -552,7 +578,7 @@ int recorder_dispatcher_set_error_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_ERROR_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_error_cb((recorder_h)handle,
 							(recorder_error_cb)_mmsvc_recorder_disp_error_cb,
 							(void *)client);
@@ -567,7 +593,7 @@ int recorder_dispatcher_unset_error_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_ERROR_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_error_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -580,7 +606,7 @@ int recorder_dispatcher_set_recording_status_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_RECORDING_STATUS_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_recording_status_cb((recorder_h)handle,
 							(recorder_recording_status_cb)_mmsvc_recorder_disp_recording_status_cb,
 							(void *)client);
@@ -595,7 +621,7 @@ int recorder_dispatcher_unset_recording_status_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_RECORDING_STATUS_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_recording_status_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -608,7 +634,7 @@ int recorder_dispatcher_set_recording_limit_reached_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_RECORDING_LIMIT_REACHED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_recording_limit_reached_cb((recorder_h)handle,
 							(recorder_recording_limit_reached_cb)_mmsvc_recorder_disp_recording_limit_reached_cb,
 							(void *)client);
@@ -623,7 +649,7 @@ int recorder_dispatcher_unset_recording_limit_reached_cb(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_UNSET_RECORDING_LIMIT_REACHED_CB;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_unset_recording_limit_reached_cb((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -636,7 +662,7 @@ int recorder_dispatcher_foreach_supported_file_format(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_FOREACH_SUPPORTED_FILE_FORMAT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_foreach_supported_file_format((recorder_h)handle,
 							(recorder_supported_file_format_cb)_mmsvc_recorder_disp_foreach_supported_file_format_cb,
 							(void *)client);
@@ -652,7 +678,7 @@ int recorder_dispatcher_attr_set_size_limit(Client client)
 	intptr_t handle;
 	int kbyte;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_SIZE_LIMIT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(kbyte, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_size_limit((recorder_h)handle, kbyte);
 	LOGW("handle : 0x%x", handle);
@@ -667,7 +693,7 @@ int recorder_dispatcher_attr_set_time_limit(Client client)
 	intptr_t handle;
 	int second;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_TIME_LIMIT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(second, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_time_limit((recorder_h)handle, second);
 	LOGW("handle : 0x%x", handle);
@@ -682,7 +708,7 @@ int recorder_dispatcher_attr_set_audio_device(Client client)
 	intptr_t handle;
 	int set_device;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_AUDIO_DEVICE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_device, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_audio_device((recorder_h)handle, (recorder_audio_device_e)set_device);
 	LOGW("handle : 0x%x", handle);
@@ -697,7 +723,7 @@ int recorder_dispatcher_set_audio_encoder(Client client)
 	intptr_t handle;
 	int set_codec;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_AUDIO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_codec, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_audio_encoder((recorder_h)handle, (recorder_audio_codec_e)set_codec);
 	LOGW("handle : 0x%x", handle);
@@ -713,7 +739,7 @@ int recorder_dispatcher_get_audio_encoder(Client client)
 	recorder_audio_codec_e codec;
 	int get_codec;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_AUDIO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_audio_encoder((recorder_h)handle, &codec);
 	get_codec = (int)codec;
 	LOGW("handle : 0x%x", handle);
@@ -728,7 +754,7 @@ int recorder_dispatcher_set_video_encoder(Client client)
 	intptr_t handle;
 	int set_codec;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_SET_VIDEO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_codec, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_set_video_encoder((recorder_h)handle, (recorder_video_codec_e)set_codec);
 	LOGW("handle : 0x%x", handle);
@@ -744,7 +770,7 @@ int recorder_dispatcher_get_video_encoder(Client client)
 	recorder_video_codec_e codec;
 	int get_codec;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_GET_VIDEO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_get_video_encoder((recorder_h)handle, &codec);
 	get_codec = (int)codec;
 	LOGW("handle : 0x%x", handle);
@@ -759,7 +785,7 @@ int recorder_dispatcher_attr_set_audio_samplerate(Client client)
 	intptr_t handle;
 	int samplerate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_AUDIO_SAMPLERATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(samplerate, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_audio_samplerate((recorder_h)handle, samplerate);
 	LOGW("handle : 0x%x samplerate : %d", handle, samplerate);
@@ -774,7 +800,7 @@ int recorder_dispatcher_attr_set_audio_encoder_bitrate(Client client)
 	intptr_t handle;
 	int bitrate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_AUDIO_ENCODER_BITRATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(bitrate, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_audio_encoder_bitrate((recorder_h)handle, bitrate);
 	LOGW("handle : 0x%x", handle);
@@ -789,7 +815,7 @@ int recorder_dispatcher_attr_set_video_encoder_bitrate(Client client)
 	intptr_t handle;
 	int bitrate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_VIDEO_ENCODER_BITRATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(bitrate, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_video_encoder_bitrate((recorder_h)handle, bitrate);
 	LOGW("handle : 0x%x", handle);
@@ -804,7 +830,7 @@ int recorder_dispatcher_attr_get_size_limit(Client client)
 	intptr_t handle;
 	int get_kbyte;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_SIZE_LIMIT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_size_limit((recorder_h)handle, &get_kbyte);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_kbyte);
@@ -818,7 +844,7 @@ int recorder_dispatcher_attr_get_time_limit(Client client)
 	intptr_t handle;
 	int get_second;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_TIME_LIMIT;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_time_limit((recorder_h)handle, &get_second);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_second);
@@ -833,7 +859,7 @@ int recorder_dispatcher_attr_get_audio_device(Client client)
 	recorder_audio_device_e device;
 	int get_device;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_AUDIO_DEVICE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_audio_device((recorder_h)handle, &device);
 	get_device = (int)device;
 	LOGW("handle : 0x%x", handle);
@@ -848,7 +874,7 @@ int recorder_dispatcher_attr_get_audio_samplerate(Client client)
 	intptr_t handle;
 	int get_samplerate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_AUDIO_SAMPLERATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_audio_samplerate((recorder_h)handle, &get_samplerate);
 	LOGW("handle : 0x%x, get_samplerate : %d", handle, get_samplerate);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_samplerate);
@@ -862,7 +888,7 @@ int recorder_dispatcher_attr_get_audio_encoder_bitrate(Client client)
 	intptr_t handle;
 	int get_bitrate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_AUDIO_ENCODER_BITRATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_audio_encoder_bitrate((recorder_h)handle, &get_bitrate);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_bitrate);
@@ -876,7 +902,7 @@ int recorder_dispatcher_attr_get_video_encoder_bitrate(Client client)
 	intptr_t handle;
 	int get_bitrate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_VIDEO_ENCODER_BITRATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_video_encoder_bitrate((recorder_h)handle, &get_bitrate);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_bitrate);
@@ -889,7 +915,7 @@ int recorder_dispatcher_foreach_supported_audio_encoder(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_FOREACH_SUPPORTED_AUDIO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_foreach_supported_audio_encoder((recorder_h)handle,
 							(recorder_supported_audio_encoder_cb)_mmsvc_recorder_disp_foreach_supported_audio_encoder_cb,
 							(void *)client);
@@ -904,7 +930,7 @@ int recorder_dispatcher_foreach_supported_video_encoder(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_FOREACH_SUPPORTED_VIDEO_ENCODER;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_foreach_supported_video_encoder((recorder_h)handle,
 							(recorder_supported_video_encoder_cb)_mmsvc_recorder_disp_foreach_supported_video_encoder_cb,
 							(void *)client);
@@ -920,7 +946,7 @@ int recorder_dispatcher_attr_set_mute(Client client)
 	intptr_t handle;
 	int set_enable;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_MUTE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_enable, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_mute((recorder_h)handle, (bool)set_enable);
 	LOGW("handle : 0x%x", handle);
@@ -934,7 +960,7 @@ int recorder_dispatcher_attr_is_muted(Client client)
 	int ret = RECORDER_ERROR_NONE;
 	intptr_t handle;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_IS_MUTED;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_is_muted((recorder_h)handle);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return(api, ret, client);
@@ -948,7 +974,7 @@ int recorder_dispatcher_attr_set_recording_motion_rate(Client client)
 	intptr_t handle;
 	double rate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_RECORDING_MOTION_RATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(rate, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_recording_motion_rate((recorder_h)handle, rate);
 	LOGW("handle : 0x%x", handle);
@@ -963,7 +989,7 @@ int recorder_dispatcher_attr_get_recording_motion_rate(Client client)
 	intptr_t handle;
 	double get_rate;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_RECORDING_MOTION_RATE;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_recording_motion_rate((recorder_h)handle, &get_rate);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, DOUBLE, get_rate);
@@ -977,7 +1003,7 @@ int recorder_dispatcher_attr_set_audio_channel(Client client)
 	intptr_t handle;
 	int channel_count;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_AUDIO_CHANNEL;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(channel_count, mmsvc_core_client_get_msg(client));
 	LOGW("channel_count : %d", channel_count);
 	ret = mmsvc_recorder_attr_set_audio_channel((recorder_h)handle, channel_count);
@@ -993,7 +1019,7 @@ int recorder_dispatcher_attr_get_audio_channel(Client client)
 	intptr_t handle;
 	int get_channel_count;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_AUDIO_CHANNEL;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_audio_channel((recorder_h)handle, &get_channel_count);
 	LOGW("handle : 0x%x", handle);
 	mmsvc_recorder_msg_return1(api, ret, client, INT, get_channel_count);
@@ -1007,7 +1033,7 @@ int recorder_dispatcher_attr_set_orientation_tag(Client client)
 	intptr_t handle;
 	int set_orientation;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_SET_ORIENTATION_TAG;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	mmsvc_recorder_msg_get(set_orientation, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_set_orientation_tag((recorder_h)handle, (recorder_rotation_e)set_orientation);
 	LOGW("handle : 0x%x", handle);
@@ -1023,7 +1049,7 @@ int recorder_dispatcher_attr_get_orientation_tag(Client client)
 	recorder_rotation_e orientation;
 	int get_orientation;
 	mmsvc_recorder_api_e api = MMSVC_RECORDER_API_ATTR_GET_ORIENTATION_TAG;
-	mmsvc_recorder_msg_get(handle, mmsvc_core_client_get_msg(client));
+	mmsvc_recorder_msg_get_pointer(handle, mmsvc_core_client_get_msg(client));
 	ret = mmsvc_recorder_attr_get_orientation_tag((recorder_h)handle, &orientation);
 	get_orientation = (int)orientation;
 	LOGW("handle : 0x%x", handle);
