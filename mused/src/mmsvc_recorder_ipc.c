@@ -110,7 +110,6 @@ int mmsvc_recorder_ipc_import_tbm(mmsvc_recorder_transport_info_s *transport_inf
 	return TRUE;
 
 IMPORT_FAIL:
-MAPPING_FAIL:
 	return FALSE;
 }
 
