@@ -60,12 +60,12 @@ cp LICENSE.APLv2 %{buildroot}/usr/share/license/%{name}
 %files
 %manifest mmsvc-recorder.manifest
 %{_libdir}/libmmsvc-recorder.so.*
-%{_libdir}/libmused-recorder.so*
+%{_libdir}/libmuse-recorder.so*
 %{_datadir}/license/%{name}
 %files devel
 %{_includedir}/media/mmsvc_recorder.h
-%{_includedir}/media/mused_recorder.h
-%{_includedir}/media/mused_recorder_msg.h
+%{_includedir}/media/muse_recorder.h
+%{_includedir}/media/muse_recorder_msg.h
 %{_libdir}/pkgconfig/*.pc
 %{_libdir}/libmmsvc-recorder.so
-%{_libdir}/libmused-recorder.so
+%{_libdir}/libmuse-recorder.so
