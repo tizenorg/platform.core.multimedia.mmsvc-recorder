@@ -1,5 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-SET(service "mused")
+SET(service "muse")
 SET(submodule "recorder")
 
 SET(dependents "dlog mused mm-common glib-2.0 mmsvc-camera capi-media-audio-io audio-session-mgr")
