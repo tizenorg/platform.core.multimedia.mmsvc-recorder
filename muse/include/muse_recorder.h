@@ -21,10 +21,18 @@
 extern "C" {
 #endif
 
+/**
+  * @file muse_recorder.h
+  * @brief This file contains the muse recorder API for framework, related structures and enumerations.
+  */
+
 #include "tbm_bufmgr.h"
 #include <stdbool.h>
 #include <stdio.h>
 
+/**
+ * @brief Enumeration for the muse recorder apis.
+ */
 typedef enum {
 	MUSE_RECORDER_API_CREATE, //0
 	MUSE_RECORDER_API_DESTROY,
@@ -85,6 +93,9 @@ typedef enum {
 	MUSE_RECORDER_API_MAX //56
 } muse_recorder_api_e;
 
+/**
+ * @brief Enumeration for the muse recorder events.
+ */
 typedef enum {
 	MUSE_RECORDER_EVENT_TYPE_STATE_CHANGE,
 	MUSE_RECORDER_EVENT_TYPE_RECORDING_LIMITED,
@@ -99,23 +110,32 @@ typedef enum {
 	MUSE_RECORDER_EVENT_TYPE_NUM
 }muse_recorder_event_e;
 
+/**
+ * @brief The structure type for muse camera errors.
+ */
 typedef enum {
 	MUSE_RECORDER_ERROR_INVALID = -1,
 	MUSE_RECORDER_ERROR_NONE = 1,
 } muse_recorder_error_e;
 
+/**
+ * @brief The structure type for muse recorder type.
+ */
 typedef enum {
 	MUSE_RECORDER_TYPE_AUDIO = 0,
 	MUSE_RECORDER_TYPE_VIDEO
 }muse_recorder_type_e;
 
+/**
+ * @brief The structure type for muse recorder source type.
+ */
 typedef enum {
 	MUSE_RECORDER_SOURCE_TYPE_UNKNOWN,
 	MUSE_RECORDER_SOURCE_TYPE_CAMERA,
 }muse_recorder_source_type_e;
 
 /**
- * @brief The structure type for data transport
+ * @brief The structure type for data transport for the muse recorder.
  */
 typedef struct {
 	int data_size;
@@ -125,18 +145,61 @@ typedef struct {
 	tbm_bufmgr bufmgr;
 } muse_recorder_transport_info_s;
 
+/**
+ * @brief The structure type for the userdata, registering into the daemon core.
+ */
 typedef struct {
 	tbm_bufmgr bufmgr;
 } muse_recorder_info_s;
 
+/**
+ * @brief Definition for the callback event id.
+ */
 #define MUSE_RECORDER_CB_EVENT	MUSE_RECORDER_API_MAX + 1
-#define MUSE_RECORDER_MSG_MAX_LENGTH		256
-#define MUSE_RECORDER_PARSE_STRING_SIZE		200
 
+/**
+ * @brief Definition for the max message length.
+ */
+#define MUSE_RECORDER_MSG_MAX_LENGTH		256
+
+/**
+ * @brief Definition for the wait time of the ipc callback.
+ */
+#define CALLBACK_TIME_OUT 3
+
+/*
+ * @brief Makes the tbm buffer object, and set to the muse recorder structure.
+ * @param[out] transport_info The allocated structure, tbm bo will be set in here.
+ * @return TRUE on success, otherwise a FALSE value
+ */
 bool muse_recorder_ipc_make_tbm(muse_recorder_transport_info_s *transport_info);
+
+/**
+ * @brief Exports the tbm buffer object, another process can import this bo.
+ * @param[in] transport_info Using transport_info.bo to export.
+ * @return TBM gem name on success, otherwise a negative error value
+ */
 int muse_recorder_ipc_export_tbm(muse_recorder_transport_info_s transport_info);
+
+/**
+ * @brief Initialize the tbm buffer manager, mainly at the client side.
+ * @param[out] transport_info The allocated structure, tbm bufmgr will be set in here.
+ * @return TRUE on success, otherwise a FALSE value
+ */
 bool muse_recorder_ipc_init_tbm(muse_recorder_transport_info_s *transport_info);
+
+/**
+ * @brief Imports the tbm buffer object.
+ * @param[out] transport_info Set the transport_info.bo.
+ * @return TRUE on success, otherwise a FALSE value
+ */
 int muse_recorder_ipc_import_tbm(muse_recorder_transport_info_s *transport_info);
+
+/**
+ * @brief Unreference the tbm buffer object.
+ * @param[in] transport_info Using the transport_info.bo.
+ * @return TRUE on success, otherwise a FALSE value
+ */
 void muse_recorder_ipc_unref_tbm(muse_recorder_transport_info_s *transport_info);
 
 #ifdef __cplusplus

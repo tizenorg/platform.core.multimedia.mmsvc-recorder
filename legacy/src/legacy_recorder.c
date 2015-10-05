@@ -24,8 +24,8 @@
 #include <mm_camcorder.h>
 #include <mm_types.h>
 #include <math.h>
-#include <mmsvc_camera.h>
-#include <mmsvc_recorder_private.h>
+#include <legacy_camera.h>
+#include <legacy_recorder_private.h>
 #include <dlog.h>
 #include <unistd.h>
 #include <errno.h>
@@ -491,7 +491,7 @@ static int _recorder_check_and_set_attribute(recorder_h recorder, const char *at
 }
 
 
-int mmsvc_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
+int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 {
 	int ret = MM_ERROR_NONE;
 	int resource_fd = -1;
@@ -546,7 +546,7 @@ int mmsvc_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 	_camera_get_mm_handle(camera, &handle->mm_handle);
 	_camera_set_relay_mm_message_callback(camera, __mm_recorder_msg_cb , (void*)handle);
 	handle->type = _RECORDER_TYPE_VIDEO;
-	mmsvc_recorder_get_state((recorder_h)handle, (recorder_state_e*)&handle->state);
+	legacy_recorder_get_state((recorder_h)handle, (recorder_state_e*)&handle->state);
 
 	mm_camcorder_get_attributes(handle->mm_handle, NULL,
 				    MMCAM_CAMERA_FORMAT, &preview_format,
@@ -588,7 +588,7 @@ int mmsvc_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 }
 
 
-int mmsvc_recorder_create_audiorecorder(recorder_h *recorder)
+int legacy_recorder_create_audiorecorder(recorder_h *recorder)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = NULL;
@@ -654,7 +654,7 @@ int mmsvc_recorder_create_audiorecorder(recorder_h *recorder)
 }
 
 
-int mmsvc_recorder_get_state(recorder_h recorder, recorder_state_e *state)
+int legacy_recorder_get_state(recorder_h recorder, recorder_state_e *state)
 {
 	int ret = MM_ERROR_NONE;
 	MMCamcorderStateType mmstate;
@@ -681,7 +681,7 @@ int mmsvc_recorder_get_state(recorder_h recorder, recorder_state_e *state)
 }
 
 
-int mmsvc_recorder_destroy(recorder_h recorder)
+int legacy_recorder_destroy(recorder_h recorder)
 {
 	recorder_s *handle = NULL;
 	int ret = MM_ERROR_NONE;
@@ -723,7 +723,7 @@ int mmsvc_recorder_destroy(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_prepare(recorder_h recorder)
+int legacy_recorder_prepare(recorder_h recorder)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -735,7 +735,7 @@ int mmsvc_recorder_prepare(recorder_h recorder)
 	}
 
 	if (handle->type == _RECORDER_TYPE_VIDEO) {
-		return __convert_error_code_camera_to_recorder(mmsvc_camera_start_preview(handle->mm_source.camera));
+		return __convert_error_code_camera_to_recorder(legacy_camera_start_preview(handle->mm_source.camera));
 	}
 
 	ret = mm_camcorder_get_state(handle->mm_handle, &mmstate);
@@ -759,7 +759,7 @@ int mmsvc_recorder_prepare(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_unprepare(recorder_h recorder)
+int legacy_recorder_unprepare(recorder_h recorder)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -790,7 +790,7 @@ int mmsvc_recorder_unprepare(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_start(recorder_h recorder)
+int legacy_recorder_start(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -803,7 +803,7 @@ int mmsvc_recorder_start(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_pause(recorder_h recorder)
+int legacy_recorder_pause(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -816,7 +816,7 @@ int mmsvc_recorder_pause(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_commit(recorder_h recorder)
+int legacy_recorder_commit(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -829,7 +829,7 @@ int mmsvc_recorder_commit(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_cancel(recorder_h recorder)
+int legacy_recorder_cancel(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -842,7 +842,7 @@ int mmsvc_recorder_cancel(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_video_resolution(recorder_h recorder, int width, int height)
+int legacy_recorder_set_video_resolution(recorder_h recorder, int width, int height)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s*)recorder;
@@ -856,7 +856,7 @@ int mmsvc_recorder_set_video_resolution(recorder_h recorder, int width, int heig
 		LOGE("RECORDER_ERROR_NOT_SUPPORTED");
 		return RECORDER_ERROR_NOT_SUPPORTED;
 	}
-	mmsvc_recorder_get_state(recorder, &state);
+	legacy_recorder_get_state(recorder, &state);
 	if (state > RECORDER_STATE_READY) {
 		LOGE("RECORDER_ERROR_INVALID_STATE (state:%d)", state);
 		return RECORDER_ERROR_INVALID_STATE;
@@ -871,7 +871,7 @@ int mmsvc_recorder_set_video_resolution(recorder_h recorder, int width, int heig
 }
 
 
-int mmsvc_recorder_get_video_resolution(recorder_h recorder, int *width, int *height)
+int legacy_recorder_get_video_resolution(recorder_h recorder, int *width, int *height)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s*)recorder;
@@ -900,7 +900,7 @@ int mmsvc_recorder_get_video_resolution(recorder_h recorder, int *width, int *he
 }
 
 
-int mmsvc_recorder_foreach_supported_video_resolution(recorder_h recorder,
+int legacy_recorder_foreach_supported_video_resolution(recorder_h recorder,
                                                 recorder_supported_video_resolution_cb foreach_cb, void *user_data)
 {
 	int i = 0;
@@ -941,7 +941,7 @@ int mmsvc_recorder_foreach_supported_video_resolution(recorder_h recorder,
 }
 
 
-int mmsvc_recorder_get_audio_level(recorder_h recorder, double *level)
+int legacy_recorder_get_audio_level(recorder_h recorder, double *level)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 	recorder_state_e state;
@@ -951,7 +951,7 @@ int mmsvc_recorder_get_audio_level(recorder_h recorder, double *level)
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
-	mmsvc_recorder_get_state(recorder, &state);
+	legacy_recorder_get_state(recorder, &state);
 	if (state < RECORDER_STATE_RECORDING) {
 		LOGE("RECORDER_ERROR_INVALID_STATE(0x%08x)", RECORDER_ERROR_INVALID_STATE);
 		return RECORDER_ERROR_INVALID_STATE;
@@ -964,7 +964,7 @@ int mmsvc_recorder_get_audio_level(recorder_h recorder, double *level)
 }
 
 
-int mmsvc_recorder_set_filename(recorder_h recorder,  const char *filename)
+int legacy_recorder_set_filename(recorder_h recorder,  const char *filename)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -994,7 +994,7 @@ int mmsvc_recorder_set_filename(recorder_h recorder,  const char *filename)
 }
 
 
-int mmsvc_recorder_get_filename(recorder_h recorder,  char **filename)
+int legacy_recorder_get_filename(recorder_h recorder,  char **filename)
 {
 	int ret = MM_ERROR_NONE;
 	char *record_filename = NULL;
@@ -1025,7 +1025,7 @@ int mmsvc_recorder_get_filename(recorder_h recorder,  char **filename)
 }
 
 
-int mmsvc_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format)
+int legacy_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format)
 {
 	int format_table[6] = { MM_FILE_FORMAT_3GP, /* RECORDER_FILE_FORMAT_3GP */
 	                        MM_FILE_FORMAT_MP4, /* RECORDER_FILE_FORMAT_MP4 */
@@ -1044,7 +1044,7 @@ int mmsvc_recorder_set_file_format(recorder_h recorder, recorder_file_format_e f
 }
 
 
-int mmsvc_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *format)
+int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *format)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1093,7 +1093,7 @@ int mmsvc_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *
 }
 
 
-int mmsvc_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_changed_cb callback, void* user_data)
+int legacy_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_changed_cb callback, void* user_data)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1114,7 +1114,7 @@ int mmsvc_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_chan
 }
 
 
-int mmsvc_recorder_unset_state_changed_cb(recorder_h recorder)
+int legacy_recorder_unset_state_changed_cb(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1130,7 +1130,7 @@ int mmsvc_recorder_unset_state_changed_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_cb callback, void *user_data)
+int legacy_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_cb callback, void *user_data)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1150,7 +1150,7 @@ int mmsvc_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_
 }
 
 
-int mmsvc_recorder_unset_interrupted_cb(recorder_h recorder)
+int legacy_recorder_unset_interrupted_cb(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1166,7 +1166,7 @@ int mmsvc_recorder_unset_interrupted_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_stream_cb callback, void* user_data)
+int legacy_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_stream_cb callback, void* user_data)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1190,7 +1190,7 @@ int mmsvc_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_strea
 }
 
 
-int mmsvc_recorder_unset_audio_stream_cb(recorder_h recorder)
+int legacy_recorder_unset_audio_stream_cb(recorder_h recorder)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1209,7 +1209,7 @@ int mmsvc_recorder_unset_audio_stream_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback, void *user_data)
+int legacy_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback, void *user_data)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1229,7 +1229,7 @@ int mmsvc_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback,
 }
 
 
-int mmsvc_recorder_unset_error_cb(recorder_h recorder)
+int legacy_recorder_unset_error_cb(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1245,7 +1245,7 @@ int mmsvc_recorder_unset_error_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_recording_status_cb(recorder_h recorder, recorder_recording_status_cb callback, void* user_data)
+int legacy_recorder_set_recording_status_cb(recorder_h recorder, recorder_recording_status_cb callback, void* user_data)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1265,7 +1265,7 @@ int mmsvc_recorder_set_recording_status_cb(recorder_h recorder, recorder_recordi
 }
 
 
-int mmsvc_recorder_unset_recording_status_cb(recorder_h recorder)
+int legacy_recorder_unset_recording_status_cb(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1281,7 +1281,7 @@ int mmsvc_recorder_unset_recording_status_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_recording_limit_reached_cb callback, void* user_data)
+int legacy_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_recording_limit_reached_cb callback, void* user_data)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1301,7 +1301,7 @@ int mmsvc_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_
 }
 
 
-int mmsvc_recorder_unset_recording_limit_reached_cb(recorder_h recorder)
+int legacy_recorder_unset_recording_limit_reached_cb(recorder_h recorder)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1317,7 +1317,7 @@ int mmsvc_recorder_unset_recording_limit_reached_cb(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_foreach_supported_file_format(recorder_h recorder, recorder_supported_file_format_cb foreach_cb, void *user_data)
+int legacy_recorder_foreach_supported_file_format(recorder_h recorder, recorder_supported_file_format_cb foreach_cb, void *user_data)
 {
 	int i = 0;
 	int ret = MM_ERROR_NONE;
@@ -1371,7 +1371,7 @@ int mmsvc_recorder_foreach_supported_file_format(recorder_h recorder, recorder_s
 }
 
 
-int mmsvc_recorder_attr_set_size_limit(recorder_h recorder, int kbyte)
+int legacy_recorder_attr_set_size_limit(recorder_h recorder, int kbyte)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1389,7 +1389,7 @@ int mmsvc_recorder_attr_set_size_limit(recorder_h recorder, int kbyte)
 }
 
 
-int mmsvc_recorder_attr_set_time_limit(recorder_h recorder, int second)
+int legacy_recorder_attr_set_time_limit(recorder_h recorder, int second)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1407,7 +1407,7 @@ int mmsvc_recorder_attr_set_time_limit(recorder_h recorder, int second)
 }
 
 
-int mmsvc_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_device_e device)
+int legacy_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_device_e device)
 {
 	if (device < RECORDER_AUDIO_DEVICE_MIC || device > RECORDER_AUDIO_DEVICE_MODEM) {
 		LOGE("invalid device %d", device);
@@ -1418,7 +1418,7 @@ int mmsvc_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_dev
 }
 
 
-int mmsvc_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e codec)
+int legacy_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e codec)
 {
 	recorder_s *handle = (recorder_s *)recorder;
 	int audio_table[4] = { MM_AUDIO_CODEC_AMR,      /* RECORDER_AUDIO_CODEC_AMR */
@@ -1447,7 +1447,7 @@ int mmsvc_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e
 }
 
 
-int mmsvc_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e *codec)
+int legacy_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e *codec)
 {
 	int ret = MM_ERROR_NONE;
 	int mm_codec = 0;
@@ -1495,7 +1495,7 @@ int mmsvc_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e
 }
 
 
-int mmsvc_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e codec)
+int legacy_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e codec)
 {
 	int ret = MM_ERROR_NONE;
 	int video_table[4] = { MM_VIDEO_CODEC_H263,     /* RECORDER_VIDEO_CODEC_H263 */
@@ -1528,7 +1528,7 @@ int mmsvc_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e
 }
 
 
-int mmsvc_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e *codec)
+int legacy_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e *codec)
 {
 	int ret = MM_ERROR_NONE;
 	int mm_codec = 0;
@@ -1574,7 +1574,7 @@ int mmsvc_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e
 }
 
 
-int mmsvc_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate)
+int legacy_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate)
 {
 	if (samplerate < 1) {
 		LOGE("invalid samplerate %d", samplerate);
@@ -1585,7 +1585,7 @@ int mmsvc_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate
 }
 
 
-int mmsvc_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitrate)
+int legacy_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitrate)
 {
 	if (bitrate < 1) {
 		LOGE("invalid bitrate %d", bitrate);
@@ -1596,7 +1596,7 @@ int mmsvc_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitra
 }
 
 
-int mmsvc_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitrate)
+int legacy_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitrate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1618,7 +1618,7 @@ int mmsvc_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitra
 }
 
 
-int mmsvc_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte)
+int legacy_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1636,7 +1636,7 @@ int mmsvc_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte)
 }
 
 
-int mmsvc_recorder_attr_get_time_limit(recorder_h recorder, int *second)
+int legacy_recorder_attr_get_time_limit(recorder_h recorder, int *second)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1654,7 +1654,7 @@ int mmsvc_recorder_attr_get_time_limit(recorder_h recorder, int *second)
 }
 
 
-int mmsvc_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_device_e *device)
+int legacy_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_device_e *device)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1672,7 +1672,7 @@ int mmsvc_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_dev
 }
 
 
-int mmsvc_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerate)
+int legacy_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1690,7 +1690,7 @@ int mmsvc_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerat
 }
 
 
-int mmsvc_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitrate)
+int legacy_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitrate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1708,7 +1708,7 @@ int mmsvc_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitr
 }
 
 
-int mmsvc_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitrate)
+int legacy_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitrate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1729,7 +1729,7 @@ int mmsvc_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitr
 }
 
 
-int mmsvc_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder_supported_audio_encoder_cb foreach_cb, void *user_data)
+int legacy_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder_supported_audio_encoder_cb foreach_cb, void *user_data)
 {
 	int i = 0;
 	int ret = MM_ERROR_NONE;
@@ -1778,7 +1778,7 @@ int mmsvc_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder
 }
 
 
-int mmsvc_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder_supported_video_encoder_cb foreach_cb, void *user_data)
+int legacy_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder_supported_video_encoder_cb foreach_cb, void *user_data)
 {
 	int i = 0;
 	int ret = MM_ERROR_NONE;
@@ -1832,7 +1832,7 @@ int mmsvc_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder
 }
 
 
-int mmsvc_recorder_attr_set_mute(recorder_h recorder, bool enable)
+int legacy_recorder_attr_set_mute(recorder_h recorder, bool enable)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1850,7 +1850,7 @@ int mmsvc_recorder_attr_set_mute(recorder_h recorder, bool enable)
 }
 
 
-bool mmsvc_recorder_attr_is_muted(recorder_h recorder)
+bool legacy_recorder_attr_is_muted(recorder_h recorder)
 {
 	int ret = MM_ERROR_NONE;
 	double volume = 1.0;
@@ -1875,7 +1875,7 @@ bool mmsvc_recorder_attr_is_muted(recorder_h recorder)
 }
 
 
-int mmsvc_recorder_attr_set_recording_motion_rate(recorder_h recorder, double rate)
+int legacy_recorder_attr_set_recording_motion_rate(recorder_h recorder, double rate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1896,7 +1896,7 @@ int mmsvc_recorder_attr_set_recording_motion_rate(recorder_h recorder, double ra
 }
 
 
-int mmsvc_recorder_attr_get_recording_motion_rate(recorder_h recorder, double *rate)
+int legacy_recorder_attr_get_recording_motion_rate(recorder_h recorder, double *rate)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1922,7 +1922,7 @@ int mmsvc_recorder_attr_get_recording_motion_rate(recorder_h recorder, double *r
 }
 
 
-int mmsvc_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count)
+int legacy_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count)
 {
 	if (channel_count < 1) {
 		LOGE("invalid channel %d", channel_count);
@@ -1933,7 +1933,7 @@ int mmsvc_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count
 }
 
 
-int mmsvc_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_count)
+int legacy_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_count)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1955,7 +1955,7 @@ int mmsvc_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_coun
 }
 
 
-int mmsvc_recorder_attr_set_orientation_tag(recorder_h recorder, recorder_rotation_e orientation)
+int legacy_recorder_attr_set_orientation_tag(recorder_h recorder, recorder_rotation_e orientation)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;
@@ -1982,7 +1982,7 @@ int mmsvc_recorder_attr_set_orientation_tag(recorder_h recorder, recorder_rotati
 }
 
 
-int  mmsvc_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rotation_e *orientation)
+int  legacy_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rotation_e *orientation)
 {
 	int ret = MM_ERROR_NONE;
 	recorder_s *handle = (recorder_s *)recorder;

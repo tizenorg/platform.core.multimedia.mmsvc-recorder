@@ -1,50 +1,20 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-SET(Services
-        "application"
-        "base"
-        "content"
-        "location"
-        "media"
-        "messaging"
-        "network"
-        "social"
-        "telephony"
-        "system"
-   )
-
 # project
 SET(prefix "/usr")
-SET(version "0.0.1")
-SET(maintainer "Jeongmo Yang<jm80.yang>, Hyuntae Kim<ht1211.kim@samsung.com>, Sejong Park<sejong123.park@samsung.com>")
+SET(maintainer "Jeongmo Yang<jm80.yang>, Hyuntae Kim<ht1211.kim@samsung.com>, Seokhoon Lee<andy.shlee@samsung.com>, Taeyoung Chung <ty83.chung@samsung.com>, Sejong Park<sejong123.park@samsung.com>")
 SET(description "A Camera library in Tizen Native API")
 SET(service "mmsvc")
 SET(submodule "recorder")
-
-# for package file
-SET(dependents "dlog mm-camcorder mmsvc-camera capi-media-audio-io audio-session-mgr")
-SET(pc_dependents "capi-base-common mmsvc-camera capi-media-audio-io")
-
 SET(fw_name "${service}-${submodule}")
 
 PROJECT(${fw_name})
 
 SET(CMAKE_INSTALL_PREFIX ${prefix})
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
-SET(VERSION ${version})
 
-SET(INC_DIR include)
+SET(INC_DIR legacy/include)
 INCLUDE_DIRECTORIES(${INC_DIR})
-
-SET(MUSED_INC_DIR muse/include)
-INCLUDE_DIRECTORIES(${MUSED_INC_DIR})
-
-INCLUDE(FindPkgConfig)
-pkg_check_modules(${fw_name} REQUIRED ${dependents})
-FOREACH(flag ${${fw_name}_CFLAGS})
-    SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
-ENDFOREACH(flag)
-
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Wextra -Wno-array-bounds -Wno-empty-body -Wno-ignored-qualifiers -Wno-unused-parameter -Wshadow -Wwrite-strings -Wswitch-default -Wno-unused-but-set-parameter -Wno-unused-but-set-variable")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
@@ -53,33 +23,6 @@ IF("${ARCH}" STREQUAL "arm")
 ENDIF("${ARCH}" STREQUAL "arm")
 
 ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
-ADD_DEFINITIONS("-DTIZEN_DEBUG")
-
-SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--as-needed -Wl,--rpath=${LIB_INSTALL_DIR}")
-
-aux_source_directory(src SOURCES)
-ADD_LIBRARY(${fw_name} SHARED ${SOURCES})
-
-TARGET_LINK_LIBRARIES(${fw_name} ${${fw_name}_LDFLAGS})
-
-SET_TARGET_PROPERTIES(${fw_name}
-     PROPERTIES
-     VERSION ${FULLVER}
-     SOVERSION ${MAJORVER}
-     CLEAN_DIRECT_OUTPUT 1
-)
-
-INSTALL(TARGETS ${fw_name} DESTINATION ${LIB_INSTALL_DIR})
-INSTALL(
-        DIRECTORY ${INC_DIR}/ DESTINATION include/media
-        FILES_MATCHING
-        PATTERN "*_private.h" EXCLUDE
-        PATTERN "${INC_DIR}/*.h"
-        )
-
-SET(PC_NAME ${fw_name})
-SET(PC_REQUIRED ${pc_dependents})
-SET(PC_LDFLAGS -l${fw_name})
 
 CONFIGURE_FILE(
     ${fw_name}.pc.in
@@ -88,7 +31,7 @@ CONFIGURE_FILE(
 )
 INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/${fw_name}.pc DESTINATION ${LIB_INSTALL_DIR}/pkgconfig)
 
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(legacy)
 ADD_SUBDIRECTORY(muse)
 
 IF(UNIX)

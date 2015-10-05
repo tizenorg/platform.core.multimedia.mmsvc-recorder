@@ -18,9 +18,8 @@
 
 #ifndef __TIZEN_MULTIMEDIA_RECORDER_PRIVATE_H__
 #define	__TIZEN_MULTIMEDIA_RECORDER_PRIVATE_H__
-#include <mmsvc_camera.h>
 #include <mm_camcorder.h>
-#include <mmsvc_recorder.h>
+#include <legacy_recorder.h>
 
 #ifdef __cplusplus
 extern "C" {

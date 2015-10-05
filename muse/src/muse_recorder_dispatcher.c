@@ -26,7 +26,7 @@
 #include "muse_core.h"
 #include "muse_core_ipc.h"
 #include "mm_types.h"
-#include "mmsvc_recorder.h"
+#include "legacy_recorder.h"
 #include <dlog.h>
 
 #ifdef LOG_TAG
@@ -34,7 +34,7 @@
 #endif
 #define LOG_TAG "MMSVC_RECORDER"
 
-void _mmsvc_recorder_disp_recording_limit_reached_cb(recorder_recording_limit_type_e type, void *user_data)
+void _recorder_disp_recording_limit_reached_cb(recorder_recording_limit_type_e type, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 
@@ -47,7 +47,7 @@ void _mmsvc_recorder_disp_recording_limit_reached_cb(recorder_recording_limit_ty
 	return;
 }
 
-void _mmsvc_recorder_disp_recording_status_cb(unsigned long long elapsed_time, unsigned long long file_size, void *user_data)
+void _recorder_disp_recording_status_cb(unsigned long long elapsed_time, unsigned long long file_size, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 
@@ -62,7 +62,7 @@ void _mmsvc_recorder_disp_recording_status_cb(unsigned long long elapsed_time, u
 	return;
 }
 
-void _mmsvc_recorder_disp_state_changed_cb(recorder_state_e previous , recorder_state_e current , bool by_policy, void *user_data)
+void _recorder_disp_state_changed_cb(recorder_state_e previous , recorder_state_e current , bool by_policy, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 
@@ -79,7 +79,7 @@ void _mmsvc_recorder_disp_state_changed_cb(recorder_state_e previous , recorder_
 	return;
 }
 
-void _mmsvc_recorder_disp_interrupted_cb(recorder_policy_e policy, recorder_state_e previous, recorder_state_e current, void *user_data)
+void _recorder_disp_interrupted_cb(recorder_policy_e policy, recorder_state_e previous, recorder_state_e current, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 
@@ -96,7 +96,7 @@ void _mmsvc_recorder_disp_interrupted_cb(recorder_policy_e policy, recorder_stat
 	return;
 }
 
-void _mmsvc_recorder_disp_error_cb(recorder_error_e error, recorder_state_e current_state, void *user_data)
+void _recorder_disp_error_cb(recorder_error_e error, recorder_state_e current_state, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	int cb_error = (int)error;
@@ -111,7 +111,7 @@ void _mmsvc_recorder_disp_error_cb(recorder_error_e error, recorder_state_e curr
 	return;
 }
 
-void _mmsvc_recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_type_e format, int channel, unsigned int timestamp, void *user_data)
+void _recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_type_e format, int channel, unsigned int timestamp, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	int cb_size = size;
@@ -156,7 +156,7 @@ void _mmsvc_recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_t
 	return;
 }
 
-void _mmsvc_recorder_disp_foreach_supported_video_resolution_cb(int width, int height, void *user_data)
+void _recorder_disp_foreach_supported_video_resolution_cb(int width, int height, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	LOGD("Enter");
@@ -169,7 +169,7 @@ void _mmsvc_recorder_disp_foreach_supported_video_resolution_cb(int width, int h
 	return;
 }
 
-void _mmsvc_recorder_disp_foreach_supported_file_format_cb(recorder_file_format_e format, void *user_data)
+void _recorder_disp_foreach_supported_file_format_cb(recorder_file_format_e format, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	int cb_format = (int)format;
@@ -182,7 +182,7 @@ void _mmsvc_recorder_disp_foreach_supported_file_format_cb(recorder_file_format_
 	return;
 }
 
-void _mmsvc_recorder_disp_foreach_supported_audio_encoder_cb(recorder_audio_codec_e codec, void *user_data)
+void _recorder_disp_foreach_supported_audio_encoder_cb(recorder_audio_codec_e codec, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	int cb_codec = (int)codec;
@@ -195,7 +195,7 @@ void _mmsvc_recorder_disp_foreach_supported_audio_encoder_cb(recorder_audio_code
 	return;
 }
 
-void _mmsvc_recorder_disp_foreach_supported_video_encoder_cb(recorder_video_codec_e codec, void *user_data)
+void _recorder_disp_foreach_supported_video_encoder_cb(recorder_video_codec_e codec, void *user_data)
 {
 	muse_module_h module = (muse_module_h)user_data;
 	int cb_codec = (int)codec;
@@ -223,10 +223,10 @@ int recorder_dispatcher_create(muse_module_h module)
 	if (recorder_type == MUSE_RECORDER_TYPE_VIDEO) {
 		muse_recorder_msg_get_pointer(camera_handle, muse_core_client_get_msg(module));
 		LOGD("video type, camera handle : 0x%x", camera_handle);
-		ret = mmsvc_recorder_create_videorecorder((camera_h)camera_handle, &recorder);
+		ret = legacy_recorder_create_videorecorder((camera_h)camera_handle, &recorder);
 	} else if (recorder_type == MUSE_RECORDER_TYPE_AUDIO) {
 		LOGD("audio type");
-		ret = mmsvc_recorder_create_audiorecorder(&recorder);
+		ret = legacy_recorder_create_audiorecorder(&recorder);
 	}
 
 	if (ret == RECORDER_ERROR_NONE) {
@@ -241,7 +241,7 @@ int recorder_dispatcher_create(muse_module_h module)
 			recorder_data->bufmgr = bufmgr;
 			muse_core_client_set_cust_data(module, (void *)recorder_data);
 		} else {
-			LOGE("TBM bufmgr is NULL => check the mmsvc_core.");
+			LOGE("TBM bufmgr is NULL => check the legacy_core.");
 		}
 		muse_recorder_msg_return1(api, ret, module, POINTER, handle);
 	} else {
@@ -258,7 +258,7 @@ int recorder_dispatcher_destroy(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_DESTROY;
 	muse_recorder_info_s *recorder_data;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_destroy((recorder_h)handle);
+	ret = legacy_recorder_destroy((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -280,7 +280,7 @@ int recorder_dispatcher_get_state(muse_module_h module)
 	int get_state;
 
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_state((recorder_h)handle, &state);
+	ret = legacy_recorder_get_state((recorder_h)handle, &state);
 	get_state = (int)state;
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_state);
@@ -294,7 +294,7 @@ int recorder_dispatcher_prepare(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_PREPARE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_prepare((recorder_h)handle);
+	ret = legacy_recorder_prepare((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -307,7 +307,7 @@ int recorder_dispatcher_unprepare(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNPREPARE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unprepare((recorder_h)handle);
+	ret = legacy_recorder_unprepare((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -320,7 +320,7 @@ int recorder_dispatcher_start(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_START;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_start((recorder_h)handle);
+	ret = legacy_recorder_start((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -333,7 +333,7 @@ int recorder_dispatcher_pause(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_PAUSE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_pause((recorder_h)handle);
+	ret = legacy_recorder_pause((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -346,7 +346,7 @@ int recorder_dispatcher_commit(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_COMMIT;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_commit((recorder_h)handle);
+	ret = legacy_recorder_commit((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -359,7 +359,7 @@ int recorder_dispatcher_cancel(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_CANCEL;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_cancel((recorder_h)handle);
+	ret = legacy_recorder_cancel((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -376,7 +376,7 @@ int recorder_dispatcher_set_video_resolution(muse_module_h module)
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(width, muse_core_client_get_msg(module));
 	muse_recorder_msg_get(height, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_set_video_resolution((recorder_h)handle, width, height);
+	ret = legacy_recorder_set_video_resolution((recorder_h)handle, width, height);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -391,7 +391,7 @@ int recorder_dispatcher_get_video_resolution(muse_module_h module)
 	int get_height;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_VIDEO_RESOLUTION;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_video_resolution((recorder_h)handle, &get_width, &get_height);
+	ret = legacy_recorder_get_video_resolution((recorder_h)handle, &get_width, &get_height);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return2(api,
 								ret,
@@ -408,8 +408,8 @@ int recorder_dispatcher_foreach_supported_video_resolution(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_RESOLUTION;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_foreach_supported_video_resolution((recorder_h)handle,
-							(recorder_supported_video_resolution_cb)_mmsvc_recorder_disp_foreach_supported_video_resolution_cb,
+	ret = legacy_recorder_foreach_supported_video_resolution((recorder_h)handle,
+							(recorder_supported_video_resolution_cb)_recorder_disp_foreach_supported_video_resolution_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -424,7 +424,7 @@ int recorder_dispatcher_get_audio_level(muse_module_h module)
 	double get_level;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_AUDIO_LEVEL;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_audio_level((recorder_h)handle, &get_level);
+	ret = legacy_recorder_get_audio_level((recorder_h)handle, &get_level);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api,
 								ret,
@@ -442,7 +442,7 @@ int recorder_dispatcher_set_filename(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_FILENAME;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get_string(filename, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_set_filename((recorder_h)handle, filename);
+	ret = legacy_recorder_set_filename((recorder_h)handle, filename);
 	LOGD("handle : 0x%x, filename : %s", handle, filename);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -456,7 +456,7 @@ int recorder_dispatcher_get_filename(muse_module_h module)
 	char *get_filename;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_FILENAME;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_filename((recorder_h)handle, &get_filename);
+	ret = legacy_recorder_get_filename((recorder_h)handle, &get_filename);
 	LOGD("handle : 0x%x, filename : %s", handle, get_filename);
 	muse_recorder_msg_return1(api, ret, module, STRING, get_filename);
 
@@ -471,7 +471,7 @@ int recorder_dispatcher_set_file_format(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_FILE_FORMAT;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_format, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_set_file_format((recorder_h)handle, (recorder_file_format_e)set_format);
+	ret = legacy_recorder_set_file_format((recorder_h)handle, (recorder_file_format_e)set_format);
 	LOGD("handle : 0x%x, set_format : %d", handle, set_format);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -486,7 +486,7 @@ int recorder_dispatcher_get_file_format(muse_module_h module)
 	int get_format;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_FILE_FORMAT;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_file_format((recorder_h)handle, &format);
+	ret = legacy_recorder_get_file_format((recorder_h)handle, &format);
 	get_format = (int)format;
 	LOGD("handle : 0x%x, get_format : %d", handle, get_format);
 	muse_recorder_msg_return1(api, ret, module, INT, get_format);
@@ -500,8 +500,8 @@ int recorder_dispatcher_set_state_changed_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_STATE_CHANGED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_state_changed_cb((recorder_h)handle,
-							(recorder_state_changed_cb)_mmsvc_recorder_disp_state_changed_cb,
+	ret = legacy_recorder_set_state_changed_cb((recorder_h)handle,
+							(recorder_state_changed_cb)_recorder_disp_state_changed_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -515,7 +515,7 @@ int recorder_dispatcher_unset_state_changed_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_STATE_CHANGED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_state_changed_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_state_changed_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -528,8 +528,8 @@ int recorder_dispatcher_set_interrupted_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_INTERRUPTED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_interrupted_cb((recorder_h)handle,
-							(recorder_interrupted_cb)_mmsvc_recorder_disp_interrupted_cb,
+	ret = legacy_recorder_set_interrupted_cb((recorder_h)handle,
+							(recorder_interrupted_cb)_recorder_disp_interrupted_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -543,7 +543,7 @@ int recorder_dispatcher_unset_interrupted_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_INTERRUPTED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_interrupted_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_interrupted_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -556,8 +556,8 @@ int recorder_dispatcher_set_audio_stream_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_AUDIO_STREAM_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_audio_stream_cb((recorder_h)handle,
-							(recorder_audio_stream_cb)_mmsvc_recorder_disp_audio_stream_cb,
+	ret = legacy_recorder_set_audio_stream_cb((recorder_h)handle,
+							(recorder_audio_stream_cb)_recorder_disp_audio_stream_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -571,7 +571,7 @@ int recorder_dispatcher_unset_audio_stream_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_AUDIO_STREAM_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_audio_stream_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_audio_stream_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -584,8 +584,8 @@ int recorder_dispatcher_set_error_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_ERROR_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_error_cb((recorder_h)handle,
-							(recorder_error_cb)_mmsvc_recorder_disp_error_cb,
+	ret = legacy_recorder_set_error_cb((recorder_h)handle,
+							(recorder_error_cb)_recorder_disp_error_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -599,7 +599,7 @@ int recorder_dispatcher_unset_error_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_ERROR_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_error_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_error_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -612,8 +612,8 @@ int recorder_dispatcher_set_recording_status_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_RECORDING_STATUS_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_recording_status_cb((recorder_h)handle,
-							(recorder_recording_status_cb)_mmsvc_recorder_disp_recording_status_cb,
+	ret = legacy_recorder_set_recording_status_cb((recorder_h)handle,
+							(recorder_recording_status_cb)_recorder_disp_recording_status_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -627,7 +627,7 @@ int recorder_dispatcher_unset_recording_status_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_RECORDING_STATUS_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_recording_status_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_recording_status_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -640,8 +640,8 @@ int recorder_dispatcher_set_recording_limit_reached_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_RECORDING_LIMIT_REACHED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_set_recording_limit_reached_cb((recorder_h)handle,
-							(recorder_recording_limit_reached_cb)_mmsvc_recorder_disp_recording_limit_reached_cb,
+	ret = legacy_recorder_set_recording_limit_reached_cb((recorder_h)handle,
+							(recorder_recording_limit_reached_cb)_recorder_disp_recording_limit_reached_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -655,7 +655,7 @@ int recorder_dispatcher_unset_recording_limit_reached_cb(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_UNSET_RECORDING_LIMIT_REACHED_CB;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_unset_recording_limit_reached_cb((recorder_h)handle);
+	ret = legacy_recorder_unset_recording_limit_reached_cb((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -668,8 +668,8 @@ int recorder_dispatcher_foreach_supported_file_format(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_FOREACH_SUPPORTED_FILE_FORMAT;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_foreach_supported_file_format((recorder_h)handle,
-							(recorder_supported_file_format_cb)_mmsvc_recorder_disp_foreach_supported_file_format_cb,
+	ret = legacy_recorder_foreach_supported_file_format((recorder_h)handle,
+							(recorder_supported_file_format_cb)_recorder_disp_foreach_supported_file_format_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -685,7 +685,7 @@ int recorder_dispatcher_attr_set_size_limit(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_SIZE_LIMIT;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(kbyte, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_size_limit((recorder_h)handle, kbyte);
+	ret = legacy_recorder_attr_set_size_limit((recorder_h)handle, kbyte);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -700,7 +700,7 @@ int recorder_dispatcher_attr_set_time_limit(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_TIME_LIMIT;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(second, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_time_limit((recorder_h)handle, second);
+	ret = legacy_recorder_attr_set_time_limit((recorder_h)handle, second);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -715,7 +715,7 @@ int recorder_dispatcher_attr_set_audio_device(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_AUDIO_DEVICE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_device, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_audio_device((recorder_h)handle, (recorder_audio_device_e)set_device);
+	ret = legacy_recorder_attr_set_audio_device((recorder_h)handle, (recorder_audio_device_e)set_device);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -730,7 +730,7 @@ int recorder_dispatcher_set_audio_encoder(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_AUDIO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_codec, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_set_audio_encoder((recorder_h)handle, (recorder_audio_codec_e)set_codec);
+	ret = legacy_recorder_set_audio_encoder((recorder_h)handle, (recorder_audio_codec_e)set_codec);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -745,7 +745,7 @@ int recorder_dispatcher_get_audio_encoder(muse_module_h module)
 	int get_codec;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_AUDIO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_audio_encoder((recorder_h)handle, &codec);
+	ret = legacy_recorder_get_audio_encoder((recorder_h)handle, &codec);
 	get_codec = (int)codec;
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_codec);
@@ -761,7 +761,7 @@ int recorder_dispatcher_set_video_encoder(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_SET_VIDEO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_codec, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_set_video_encoder((recorder_h)handle, (recorder_video_codec_e)set_codec);
+	ret = legacy_recorder_set_video_encoder((recorder_h)handle, (recorder_video_codec_e)set_codec);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -776,7 +776,7 @@ int recorder_dispatcher_get_video_encoder(muse_module_h module)
 	int get_codec;
 	muse_recorder_api_e api = MUSE_RECORDER_API_GET_VIDEO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_get_video_encoder((recorder_h)handle, &codec);
+	ret = legacy_recorder_get_video_encoder((recorder_h)handle, &codec);
 	get_codec = (int)codec;
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_codec);
@@ -792,7 +792,7 @@ int recorder_dispatcher_attr_set_audio_samplerate(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_AUDIO_SAMPLERATE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(samplerate, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_audio_samplerate((recorder_h)handle, samplerate);
+	ret = legacy_recorder_attr_set_audio_samplerate((recorder_h)handle, samplerate);
 	LOGD("handle : 0x%x samplerate : %d", handle, samplerate);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -807,7 +807,7 @@ int recorder_dispatcher_attr_set_audio_encoder_bitrate(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_AUDIO_ENCODER_BITRATE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(bitrate, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_audio_encoder_bitrate((recorder_h)handle, bitrate);
+	ret = legacy_recorder_attr_set_audio_encoder_bitrate((recorder_h)handle, bitrate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -822,7 +822,7 @@ int recorder_dispatcher_attr_set_video_encoder_bitrate(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_VIDEO_ENCODER_BITRATE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(bitrate, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_video_encoder_bitrate((recorder_h)handle, bitrate);
+	ret = legacy_recorder_attr_set_video_encoder_bitrate((recorder_h)handle, bitrate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -836,7 +836,7 @@ int recorder_dispatcher_attr_get_size_limit(muse_module_h module)
 	int get_kbyte;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_SIZE_LIMIT;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_size_limit((recorder_h)handle, &get_kbyte);
+	ret = legacy_recorder_attr_get_size_limit((recorder_h)handle, &get_kbyte);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_kbyte);
 
@@ -850,7 +850,7 @@ int recorder_dispatcher_attr_get_time_limit(muse_module_h module)
 	int get_second;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_TIME_LIMIT;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_time_limit((recorder_h)handle, &get_second);
+	ret = legacy_recorder_attr_get_time_limit((recorder_h)handle, &get_second);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_second);
 
@@ -865,7 +865,7 @@ int recorder_dispatcher_attr_get_audio_device(muse_module_h module)
 	int get_device;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_AUDIO_DEVICE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_audio_device((recorder_h)handle, &device);
+	ret = legacy_recorder_attr_get_audio_device((recorder_h)handle, &device);
 	get_device = (int)device;
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_device);
@@ -880,7 +880,7 @@ int recorder_dispatcher_attr_get_audio_samplerate(muse_module_h module)
 	int get_samplerate;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_AUDIO_SAMPLERATE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_audio_samplerate((recorder_h)handle, &get_samplerate);
+	ret = legacy_recorder_attr_get_audio_samplerate((recorder_h)handle, &get_samplerate);
 	LOGD("handle : 0x%x, get_samplerate : %d", handle, get_samplerate);
 	muse_recorder_msg_return1(api, ret, module, INT, get_samplerate);
 
@@ -894,7 +894,7 @@ int recorder_dispatcher_attr_get_audio_encoder_bitrate(muse_module_h module)
 	int get_bitrate;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_AUDIO_ENCODER_BITRATE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_audio_encoder_bitrate((recorder_h)handle, &get_bitrate);
+	ret = legacy_recorder_attr_get_audio_encoder_bitrate((recorder_h)handle, &get_bitrate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_bitrate);
 
@@ -908,7 +908,7 @@ int recorder_dispatcher_attr_get_video_encoder_bitrate(muse_module_h module)
 	int get_bitrate;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_VIDEO_ENCODER_BITRATE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_video_encoder_bitrate((recorder_h)handle, &get_bitrate);
+	ret = legacy_recorder_attr_get_video_encoder_bitrate((recorder_h)handle, &get_bitrate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_bitrate);
 
@@ -921,8 +921,8 @@ int recorder_dispatcher_foreach_supported_audio_encoder(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_FOREACH_SUPPORTED_AUDIO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_foreach_supported_audio_encoder((recorder_h)handle,
-							(recorder_supported_audio_encoder_cb)_mmsvc_recorder_disp_foreach_supported_audio_encoder_cb,
+	ret = legacy_recorder_foreach_supported_audio_encoder((recorder_h)handle,
+							(recorder_supported_audio_encoder_cb)_recorder_disp_foreach_supported_audio_encoder_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -936,8 +936,8 @@ int recorder_dispatcher_foreach_supported_video_encoder(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_ENCODER;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_foreach_supported_video_encoder((recorder_h)handle,
-							(recorder_supported_video_encoder_cb)_mmsvc_recorder_disp_foreach_supported_video_encoder_cb,
+	ret = legacy_recorder_foreach_supported_video_encoder((recorder_h)handle,
+							(recorder_supported_video_encoder_cb)_recorder_disp_foreach_supported_video_encoder_cb,
 							(void *)module);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
@@ -953,7 +953,7 @@ int recorder_dispatcher_attr_set_mute(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_MUTE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_enable, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_mute((recorder_h)handle, (bool)set_enable);
+	ret = legacy_recorder_attr_set_mute((recorder_h)handle, (bool)set_enable);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -966,7 +966,7 @@ int recorder_dispatcher_attr_is_muted(muse_module_h module)
 	intptr_t handle;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_IS_MUTED;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_is_muted((recorder_h)handle);
+	ret = legacy_recorder_attr_is_muted((recorder_h)handle);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -981,7 +981,7 @@ int recorder_dispatcher_attr_set_recording_motion_rate(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_RECORDING_MOTION_RATE;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(rate, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_recording_motion_rate((recorder_h)handle, rate);
+	ret = legacy_recorder_attr_set_recording_motion_rate((recorder_h)handle, rate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -995,7 +995,7 @@ int recorder_dispatcher_attr_get_recording_motion_rate(muse_module_h module)
 	double get_rate;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_RECORDING_MOTION_RATE;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_recording_motion_rate((recorder_h)handle, &get_rate);
+	ret = legacy_recorder_attr_get_recording_motion_rate((recorder_h)handle, &get_rate);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, DOUBLE, get_rate);
 
@@ -1011,7 +1011,7 @@ int recorder_dispatcher_attr_set_audio_channel(muse_module_h module)
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(channel_count, muse_core_client_get_msg(module));
 	LOGD("channel_count : %d", channel_count);
-	ret = mmsvc_recorder_attr_set_audio_channel((recorder_h)handle, channel_count);
+	ret = legacy_recorder_attr_set_audio_channel((recorder_h)handle, channel_count);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -1025,7 +1025,7 @@ int recorder_dispatcher_attr_get_audio_channel(muse_module_h module)
 	int get_channel_count;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_AUDIO_CHANNEL;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_audio_channel((recorder_h)handle, &get_channel_count);
+	ret = legacy_recorder_attr_get_audio_channel((recorder_h)handle, &get_channel_count);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_channel_count);
 
@@ -1040,7 +1040,7 @@ int recorder_dispatcher_attr_set_orientation_tag(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_ORIENTATION_TAG;
 	handle = muse_core_ipc_get_handle(module);
 	muse_recorder_msg_get(set_orientation, muse_core_client_get_msg(module));
-	ret = mmsvc_recorder_attr_set_orientation_tag((recorder_h)handle, (recorder_rotation_e)set_orientation);
+	ret = legacy_recorder_attr_set_orientation_tag((recorder_h)handle, (recorder_rotation_e)set_orientation);
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return(api, ret, module);
 
@@ -1055,7 +1055,7 @@ int recorder_dispatcher_attr_get_orientation_tag(muse_module_h module)
 	int get_orientation;
 	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG;
 	handle = muse_core_ipc_get_handle(module);
-	ret = mmsvc_recorder_attr_get_orientation_tag((recorder_h)handle, &orientation);
+	ret = legacy_recorder_attr_get_orientation_tag((recorder_h)handle, &orientation);
 	get_orientation = (int)orientation;
 	LOGD("handle : 0x%x", handle);
 	muse_recorder_msg_return1(api, ret, module, INT, get_orientation);

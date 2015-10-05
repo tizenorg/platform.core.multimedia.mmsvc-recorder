@@ -4,7 +4,7 @@ Version:    0.2.2
 Release:    0
 Group:      Multimedia/API
 License:    Apache-2.0
-Source0:    %{service}-%{name}-%{version}.tar.gz
+Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(mm-camcorder)
@@ -59,14 +59,12 @@ cp LICENSE.APLv2 %{buildroot}/usr/share/license/%{name}
 
 %files
 %manifest mmsvc-recorder.manifest
-%{_libdir}/libmmsvc-recorder.so.*
+%{_libdir}/liblegacy-recorder.so*
 %{_libdir}/libmuse-recorder.so*
 %{_datadir}/license/%{name}
-%{_includedir}/media/mmsvc_recorder.h
+%{_includedir}/media/legacy_recorder.h
 
 %files devel
 %{_includedir}/media/muse_recorder.h
 %{_includedir}/media/muse_recorder_msg.h
 %{_libdir}/pkgconfig/*.pc
-%{_libdir}/libmmsvc-recorder.so
-%{_libdir}/libmuse-recorder.so

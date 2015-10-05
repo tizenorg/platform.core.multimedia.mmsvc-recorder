@@ -17,7 +17,7 @@
 #ifndef __TIZEN_MULTIMEDIA_RECORDER_H__
 #define __TIZEN_MULTIMEDIA_RECORDER_H__
 #include <tizen.h>
-#include <mmsvc_camera.h>
+#include <legacy_camera.h>
 #include <audio_io.h>
 
 #ifdef __cplusplus
@@ -352,7 +352,7 @@ typedef bool (*recorder_supported_video_encoder_cb)(recorder_video_codec_e codec
  * @see camera_stop_preview()
  * @see recorder_destroy()
  */
-int mmsvc_recorder_create_videorecorder(camera_h camera, recorder_h *recorder);
+int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder);
 
 /**
  * @brief Creates a recorder handle to record an audio.
@@ -372,7 +372,7 @@ int mmsvc_recorder_create_videorecorder(camera_h camera, recorder_h *recorder);
  * @post The recorder state will be #RECORDER_STATE_CREATED.
  * @see recorder_destroy()
  */
-int mmsvc_recorder_create_audiorecorder(recorder_h *recorder);
+int legacy_recorder_create_audiorecorder(recorder_h *recorder);
 
 
 /**
@@ -395,7 +395,7 @@ int mmsvc_recorder_create_audiorecorder(recorder_h *recorder);
  * @see	recorder_create_videorecorder()
  * @see	recorder_create_audiorecorder()
  */
-int mmsvc_recorder_destroy(recorder_h recorder);
+int legacy_recorder_destroy(recorder_h recorder);
 
 /**
  * @brief Prepares the media recorder for recording.
@@ -413,9 +413,9 @@ int mmsvc_recorder_destroy(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @pre  The recorder state should be #RECORDER_STATE_CREATED by mmsvc_recorder_create_videorecorder(), mmsvc_recorder_create_audiorecorder() or mmsvc_recorder_unprepare().
+ * @pre  The recorder state should be #RECORDER_STATE_CREATED by legacy_recorder_create_videorecorder(), legacy_recorder_create_audiorecorder() or legacy_recorder_unprepare().
  * @post The recorder state will be #RECORDER_STATE_READY.
- * @post If recorder handle is created by mmsvc_recorder_create_videorecorder(), the camera state will be changed to #CAMERA_STATE_PREVIEW.
+ * @post If recorder handle is created by legacy_recorder_create_videorecorder(), the camera state will be changed to #CAMERA_STATE_PREVIEW.
  * @see	recorder_create_videorecorder()
  * @see	recorder_create_audiorecorder()
  * @see	recorder_unprepare()
@@ -423,7 +423,7 @@ int mmsvc_recorder_destroy(recorder_h recorder);
  * @see	recorder_set_video_encoder()
  * @see	recorder_set_file_format()
  */
-int mmsvc_recorder_prepare(recorder_h recorder);
+int legacy_recorder_prepare(recorder_h recorder);
 
 /**
  * @brief Resets the media recorder.
@@ -438,14 +438,14 @@ int mmsvc_recorder_prepare(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @pre  The recorder state should be #RECORDER_STATE_READY set by mmsvc_recorder_prepare(), mmsvc_recorder_cancel() or mmsvc_recorder_commit().
+ * @pre  The recorder state should be #RECORDER_STATE_READY set by legacy_recorder_prepare(), legacy_recorder_cancel() or legacy_recorder_commit().
  * @post The recorder state will be #RECORDER_STATE_CREATED.
- * @post If the recorder handle is created by mmsvc_recorder_create_videorecorder(), camera state will be changed to #CAMERA_STATE_CREATED.
+ * @post If the recorder handle is created by legacy_recorder_create_videorecorder(), camera state will be changed to #CAMERA_STATE_CREATED.
  * @see	recorder_prepare()
  * @see	recorder_cancel()
  * @see	recorder_commit()
  */
-int mmsvc_recorder_unprepare(recorder_h recorder);
+int legacy_recorder_unprepare(recorder_h recorder);
 
 /**
  * @brief Starts the recording.
@@ -467,8 +467,8 @@ int mmsvc_recorder_unprepare(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @pre The recorder state must be #RECORDER_STATE_READY by mmsvc_recorder_prepare() or #RECORDER_STATE_PAUSED by mmsvc_recorder_pause(). \n
- *      The filename should be set by mmsvc_recorder_set_filename().
+ * @pre The recorder state must be #RECORDER_STATE_READY by legacy_recorder_prepare() or #RECORDER_STATE_PAUSED by legacy_recorder_pause(). \n
+ *      The filename should be set by legacy_recorder_set_filename().
  * @post The recorder state will be #RECORDER_STATE_RECORDING.
  * @see	recorder_pause()
  * @see	recorder_commit()
@@ -479,14 +479,14 @@ int mmsvc_recorder_unprepare(recorder_h recorder);
  * @see	recorder_recording_status_cb()
  * @see	recorder_set_filename()
  */
-int mmsvc_recorder_start(recorder_h recorder);
+int legacy_recorder_start(recorder_h recorder);
 
 /**
  * @brief Pauses the recording.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @privlevel public
  * @privilege %http://tizen.org/privilege/recorder
- * @remarks Recording can be resumed with mmsvc_recorder_start().
+ * @remarks Recording can be resumed with legacy_recorder_start().
  * @param[in]  recorder  The handle to the media recorder
  * @return @c 0 on success, otherwise a negative error value
  * @retval #RECORDER_ERROR_NONE Successful
@@ -497,11 +497,11 @@ int mmsvc_recorder_start(recorder_h recorder);
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @pre The recorder state must be #RECORDER_STATE_RECORDING.
  * @post The recorder state will be #RECORDER_STATE_PAUSED.
- * @see mmsvc_recorder_pause()
- * @see mmsvc_recorder_commit()
- * @see mmsvc_recorder_cancel()
+ * @see legacy_recorder_pause()
+ * @see legacy_recorder_commit()
+ * @see legacy_recorder_cancel()
  */
-int mmsvc_recorder_pause(recorder_h recorder);
+int legacy_recorder_pause(recorder_h recorder);
 
 /**
  * @brief Stops recording and saves the result.
@@ -519,14 +519,14 @@ int mmsvc_recorder_pause(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @pre The recorder state must be #RECORDER_STATE_RECORDING set by mmsvc_recorder_start() or #RECORDER_STATE_PAUSED by mmsvc_recorder_pause().
+ * @pre The recorder state must be #RECORDER_STATE_RECORDING set by legacy_recorder_start() or #RECORDER_STATE_PAUSED by legacy_recorder_pause().
  * @post The recorder state will be #RECORDER_STATE_READY.
- * @see mmsvc_recorder_pause()
- * @see mmsvc_recorder_cancel()
- * @see mmsvc_recorder_set_filename()
+ * @see legacy_recorder_pause()
+ * @see legacy_recorder_cancel()
+ * @see legacy_recorder_set_filename()
  * @see	recorder_start()
  */
-int mmsvc_recorder_commit(recorder_h recorder);
+int legacy_recorder_commit(recorder_h recorder);
 
 /**
  * @brief Cancels the recording.
@@ -545,14 +545,14 @@ int mmsvc_recorder_commit(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @pre The recorder state must be #RECORDER_STATE_RECORDING set by mmsvc_recorder_start() or #RECORDER_STATE_PAUSED by mmsvc_recorder_pause().
+ * @pre The recorder state must be #RECORDER_STATE_RECORDING set by legacy_recorder_start() or #RECORDER_STATE_PAUSED by legacy_recorder_pause().
  * @post The recorder state will be #RECORDER_STATE_READY.
- * @see mmsvc_recorder_pause()
- * @see mmsvc_recorder_commit()
- * @see mmsvc_recorder_cancel()
- * @see mmsvc_recorder_start()
+ * @see legacy_recorder_pause()
+ * @see legacy_recorder_commit()
+ * @see legacy_recorder_cancel()
+ * @see legacy_recorder_start()
  */
-int mmsvc_recorder_cancel(recorder_h recorder);
+int legacy_recorder_cancel(recorder_h recorder);
 
 /**
  * @brief Gets the recorder's current state.
@@ -565,7 +565,7 @@ int mmsvc_recorder_cancel(recorder_h recorder);
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  */
-int mmsvc_recorder_get_state(recorder_h recorder, recorder_state_e *state);
+int legacy_recorder_get_state(recorder_h recorder, recorder_state_e *state);
 
 /**
  * @brief Gets the peak audio input level that was sampled since the last call to this function.
@@ -581,7 +581,7 @@ int mmsvc_recorder_get_state(recorder_h recorder, recorder_state_e *state);
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @pre The recorder state must be #RECORDER_STATE_RECORDING or #RECORDER_STATE_PAUSED.
  */
-int mmsvc_recorder_get_audio_level(recorder_h recorder, double *dB);
+int legacy_recorder_get_audio_level(recorder_h recorder, double *dB);
 
 /**
  * @brief Sets the file path to record.
@@ -599,7 +599,7 @@ int mmsvc_recorder_get_audio_level(recorder_h recorder, double *dB);
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see	recorder_get_filename()
  */
-int mmsvc_recorder_set_filename(recorder_h recorder, const char *path);
+int legacy_recorder_set_filename(recorder_h recorder, const char *path);
 
 /**
  * @brief Gets the file path to record.
@@ -614,7 +614,7 @@ int mmsvc_recorder_set_filename(recorder_h recorder, const char *path);
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_filename()
  */
-int mmsvc_recorder_get_filename(recorder_h recorder, char **path);
+int legacy_recorder_get_filename(recorder_h recorder, char **path);
 
 /**
  * @brief Sets the file format for recording media stream.
@@ -633,10 +633,10 @@ int mmsvc_recorder_get_filename(recorder_h recorder, char **path);
  * @retval #RECORDER_ERROR_INVALID_OPERATION Invalid operation (Since 2.3.1)
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY (for video recorder only).\n
  *      Since 2.3.1, this API also works for audio recorder when its state is #RECORDER_STATE_READY.
- * @see mmsvc_recorder_get_file_format()
- * @see mmsvc_recorder_foreach_supported_file_format()
+ * @see legacy_recorder_get_file_format()
+ * @see legacy_recorder_foreach_supported_file_format()
  */
-int mmsvc_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format);
+int legacy_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format);
 
 
 /**
@@ -649,10 +649,10 @@ int mmsvc_recorder_set_file_format(recorder_h recorder, recorder_file_format_e f
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @see mmsvc_recorder_set_file_format()
- * @see mmsvc_recorder_foreach_supported_file_format()
+ * @see legacy_recorder_set_file_format()
+ * @see legacy_recorder_foreach_supported_file_format()
  */
-int mmsvc_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *format);
+int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *format);
 
 
  /**
@@ -675,12 +675,12 @@ int mmsvc_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_supported_file_format_cb() will be invoked.
- * @see mmsvc_recorder_get_file_format()
- * @see mmsvc_recorder_set_file_format()
- * @see mmsvc_recorder_supported_file_format_cb()
+ * @post  legacy_recorder_supported_file_format_cb() will be invoked.
+ * @see legacy_recorder_get_file_format()
+ * @see legacy_recorder_set_file_format()
+ * @see legacy_recorder_supported_file_format_cb()
  */
-int mmsvc_recorder_foreach_supported_file_format(recorder_h recorder, recorder_supported_file_format_cb callback, void *user_data);
+int legacy_recorder_foreach_supported_file_format(recorder_h recorder, recorder_supported_file_format_cb callback, void *user_data);
 
 /**
  * @}
@@ -710,9 +710,9 @@ int mmsvc_recorder_foreach_supported_file_format(recorder_h recorder, recorder_s
  * @retval #RECORDER_ERROR_INVALID_OPERATION Invalid operation (Since 2.3.1)
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see	recorder_get_audio_encoder()
- * @see mmsvc_recorder_foreach_supported_audio_encoder()
+ * @see legacy_recorder_foreach_supported_audio_encoder()
  */
-int mmsvc_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e codec);
+int legacy_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e codec);
 
 /**
  * @brief Gets the audio codec for encoding an audio stream.
@@ -725,9 +725,9 @@ int mmsvc_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_audio_encoder()
- * @see mmsvc_recorder_foreach_supported_audio_encoder()
+ * @see legacy_recorder_foreach_supported_audio_encoder()
  */
-int mmsvc_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e *codec);
+int legacy_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e *codec);
 
  /**
  * @}
@@ -749,12 +749,12 @@ int mmsvc_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_e
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_supported_audio_encoder_cb() will be invoked.
+ * @post  legacy_recorder_supported_audio_encoder_cb() will be invoked.
  * @see	recorder_set_audio_encoder()
  * @see	recorder_get_audio_encoder()
  * @see	recorder_supported_audio_encoder_cb()
  */
-int mmsvc_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder_supported_audio_encoder_cb callback, void *user_data);
+int legacy_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder_supported_audio_encoder_cb callback, void *user_data);
 
 /**
  * @}
@@ -783,7 +783,7 @@ int mmsvc_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorder
  * @see	recorder_get_video_resolution()
  * @see	recorder_foreach_supported_video_resolution()
  */
-int mmsvc_recorder_set_video_resolution(recorder_h recorder, int width, int height);
+int legacy_recorder_set_video_resolution(recorder_h recorder, int width, int height);
 
 /**
  * @brief Gets the resolution of the video recording.
@@ -799,7 +799,7 @@ int mmsvc_recorder_set_video_resolution(recorder_h recorder, int width, int heig
  * @see	recorder_set_video_resolution()
  * @see	recorder_foreach_supported_video_resolution()
  */
-int mmsvc_recorder_get_video_resolution(recorder_h recorder, int *width, int *height);
+int legacy_recorder_get_video_resolution(recorder_h recorder, int *width, int *height);
 
 /**
  * @}
@@ -821,12 +821,12 @@ int mmsvc_recorder_get_video_resolution(recorder_h recorder, int *width, int *he
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post	This function invokes mmsvc_recorder_supported_video_resolution_cb() repeatedly to retrieve each supported video resolution.
+ * @post	This function invokes legacy_recorder_supported_video_resolution_cb() repeatedly to retrieve each supported video resolution.
  * @see	recorder_set_video_resolution()
  * @see	recorder_get_video_resolution()
  * @see	recorder_supported_video_resolution_cb()
  */
-int mmsvc_recorder_foreach_supported_video_resolution(recorder_h recorder,
+int legacy_recorder_foreach_supported_video_resolution(recorder_h recorder,
                                                 recorder_supported_video_resolution_cb foreach_cb, void *user_data);
 
 /**
@@ -852,9 +852,9 @@ int mmsvc_recorder_foreach_supported_video_resolution(recorder_h recorder,
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see recorder_get_video_encoder()
- * @see mmsvc_recorder_foreach_supported_video_encoder()
+ * @see legacy_recorder_foreach_supported_video_encoder()
  */
-int mmsvc_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e codec);
+int legacy_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e codec);
 
 /**
  * @brief Gets the video codec for encoding video stream.
@@ -866,10 +866,10 @@ int mmsvc_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @see mmsvc_recorder_set_video_encoder()
- * @see mmsvc_recorder_foreach_supported_video_encoder()
+ * @see legacy_recorder_set_video_encoder()
+ * @see legacy_recorder_foreach_supported_video_encoder()
  */
-int mmsvc_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e *codec);
+int legacy_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e *codec);
 
 /**
  * @}
@@ -891,12 +891,12 @@ int mmsvc_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_e
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_supported_video_encoder_cb() will be invoked.
- * @see mmsvc_recorder_set_video_encoder()
- * @see mmsvc_recorder_get_video_encoder()
+ * @post  legacy_recorder_supported_video_encoder_cb() will be invoked.
+ * @see legacy_recorder_set_video_encoder()
+ * @see legacy_recorder_get_video_encoder()
  * @see	recorder_supported_video_encoder_cb()
  */
-int mmsvc_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder_supported_video_encoder_cb callback, void *user_data);
+int legacy_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder_supported_video_encoder_cb callback, void *user_data);
 
  /**
  * @}
@@ -918,11 +918,11 @@ int mmsvc_recorder_foreach_supported_video_encoder(recorder_h recorder, recorder
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_state_changed_cb() will be invoked.
- * @see mmsvc_recorder_unset_state_changed_cb()
- * @see mmsvc_recorder_state_changed_cb()
+ * @post  legacy_recorder_state_changed_cb() will be invoked.
+ * @see legacy_recorder_unset_state_changed_cb()
+ * @see legacy_recorder_state_changed_cb()
  */
-int mmsvc_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_changed_cb callback, void *user_data);
+int legacy_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_changed_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -933,9 +933,9 @@ int mmsvc_recorder_set_state_changed_cb(recorder_h recorder, recorder_state_chan
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @see mmsvc_recorder_set_state_changed_cb()
+ * @see legacy_recorder_set_state_changed_cb()
  */
-int mmsvc_recorder_unset_state_changed_cb(recorder_h recorder);
+int legacy_recorder_unset_state_changed_cb(recorder_h recorder);
 
 /**
  * @brief Registers a callback function to be called when the media recorder is interrupted according to a policy.
@@ -951,7 +951,7 @@ int mmsvc_recorder_unset_state_changed_cb(recorder_h recorder);
  * @see	recorder_unset_interrupted_cb()
  * @see	recorder_interrupted_cb()
  */
-int mmsvc_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_cb callback,
+int legacy_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_cb callback,
 	    void *user_data);
 
 /**
@@ -965,14 +965,14 @@ int mmsvc_recorder_set_interrupted_cb(recorder_h recorder, recorder_interrupted_
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_interrupted_cb()
  */
-int mmsvc_recorder_unset_interrupted_cb(recorder_h recorder);
+int legacy_recorder_unset_interrupted_cb(recorder_h recorder);
 
 /**
  * @brief Registers a callback function to be called when audio stream data is being delivered.
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  * @remarks This callback function holds the same buffer that will be recorded. \n
  *          Therefore if an user changes the buffer, the result file will have the buffer. \n
- * @remarks The callback is called via internal thread of Frameworks. Therefore do not invoke UI API, mmsvc_recorder_unprepare(), mmsvc_recorder_commit() and mmsvc_recorder_cancel() in callback.\n
+ * @remarks The callback is called via internal thread of Frameworks. Therefore do not invoke UI API, legacy_recorder_unprepare(), legacy_recorder_commit() and legacy_recorder_cancel() in callback.\n
  *          This callback function to be called in #RECORDER_STATE_RECORDING and #RECORDER_STATE_PAUSED state.
  *
  * @param[in] recorder    The handle to the recorder
@@ -987,7 +987,7 @@ int mmsvc_recorder_unset_interrupted_cb(recorder_h recorder);
  * @see	recorder_unset_audio_stream_cb()
  * @see	recorder_audio_stream_cb()
  */
-int mmsvc_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_stream_cb callback, void* user_data);
+int legacy_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_stream_cb callback, void* user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -998,9 +998,9 @@ int mmsvc_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_strea
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @see     mmsvc_recorder_set_audio_stream_cb()
+ * @see     legacy_recorder_set_audio_stream_cb()
  */
-int mmsvc_recorder_unset_audio_stream_cb(recorder_h recorder);
+int legacy_recorder_unset_audio_stream_cb(recorder_h recorder);
 
 /**
  * @brief Registers a callback function to be invoked when the recording information changes.
@@ -1013,11 +1013,11 @@ int mmsvc_recorder_unset_audio_stream_cb(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_recording_status_cb() will be invoked.
+ * @post  legacy_recorder_recording_status_cb() will be invoked.
  * @see	recorder_unset_recording_status_cb()
  * @see	recorder_recording_status_cb()
  */
-int mmsvc_recorder_set_recording_status_cb(recorder_h recorder, recorder_recording_status_cb callback, void *user_data);
+int legacy_recorder_set_recording_status_cb(recorder_h recorder, recorder_recording_status_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -1030,7 +1030,7 @@ int mmsvc_recorder_set_recording_status_cb(recorder_h recorder, recorder_recordi
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_recording_status_cb()
  */
-int mmsvc_recorder_unset_recording_status_cb(recorder_h recorder);
+int legacy_recorder_unset_recording_status_cb(recorder_h recorder);
 
 /**
  * @brief Registers the callback function to be run when reached the recording limit.
@@ -1043,13 +1043,13 @@ int mmsvc_recorder_unset_recording_status_cb(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post  mmsvc_recorder_recording_limit_reached_cb() will be invoked.
+ * @post  legacy_recorder_recording_limit_reached_cb() will be invoked.
  * @see	recorder_unset_recording_limit_reached_cb()
  * @see	recorder_attr_set_size_limit()
  * @see	recorder_attr_set_time_limit()
  * @see	recorder_recording_limit_reached_cb()
  */
-int mmsvc_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_recording_limit_reached_cb callback, void *user_data);
+int legacy_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_recording_limit_reached_cb callback, void *user_data);
 
 /**
  * @brief Unregisters the callback function.
@@ -1062,7 +1062,7 @@ int mmsvc_recorder_set_recording_limit_reached_cb(recorder_h recorder, recorder_
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_recording_limit_reached_cb()
  */
-int mmsvc_recorder_unset_recording_limit_reached_cb(recorder_h recorder);
+int legacy_recorder_unset_recording_limit_reached_cb(recorder_h recorder);
 
 /**
  * @brief Registers a callback function to be called when an asynchronous operation error occurred.
@@ -1081,11 +1081,11 @@ int mmsvc_recorder_unset_recording_limit_reached_cb(recorder_h recorder);
  * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
  * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
- * @post	This function will invoke mmsvc_recorder_error_cb() when an asynchronous operation error occur.
+ * @post	This function will invoke legacy_recorder_error_cb() when an asynchronous operation error occur.
  * @see	recorder_unset_error_cb()
  * @see	recorder_error_cb()
  */
-int mmsvc_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback, void *user_data);
+int legacy_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback, void *user_data);
 
 
 /**
@@ -1099,7 +1099,7 @@ int mmsvc_recorder_set_error_cb(recorder_h recorder, recorder_error_cb callback,
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_set_error_cb()
  */
-int mmsvc_recorder_unset_error_cb(recorder_h recorder);
+int legacy_recorder_unset_error_cb(recorder_h recorder);
 
 
 /**
@@ -1129,7 +1129,7 @@ int mmsvc_recorder_unset_error_cb(recorder_h recorder);
  * @see	recorder_attr_get_size_limit()
  * @see	recorder_attr_set_time_limit()
  */
-int mmsvc_recorder_attr_set_size_limit(recorder_h recorder, int kbyte);
+int legacy_recorder_attr_set_size_limit(recorder_h recorder, int kbyte);
 
 /**
  * @brief Gets the maximum size of a recording file.
@@ -1145,7 +1145,7 @@ int mmsvc_recorder_attr_set_size_limit(recorder_h recorder, int kbyte);
  * @see	recorder_attr_set_size_limit()
  * @see	recorder_attr_get_time_limit()
  */
-int mmsvc_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte);
+int legacy_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte);
 
 /**
  * @brief Sets the time limit of a recording file.
@@ -1164,7 +1164,7 @@ int mmsvc_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte);
  * @see	recorder_attr_get_time_limit()
  * @see	recorder_attr_set_size_limit()
  */
-int mmsvc_recorder_attr_set_time_limit(recorder_h recorder, int second);
+int legacy_recorder_attr_set_time_limit(recorder_h recorder, int second);
 
 
 /**
@@ -1181,7 +1181,7 @@ int mmsvc_recorder_attr_set_time_limit(recorder_h recorder, int second);
  * @see	recorder_attr_set_time_limit()
  * @see	recorder_attr_get_size_limit()
  */
-int mmsvc_recorder_attr_get_time_limit(recorder_h recorder, int *second);
+int legacy_recorder_attr_get_time_limit(recorder_h recorder, int *second);
 
 /**
  * @brief Sets the audio device for recording.
@@ -1198,7 +1198,7 @@ int mmsvc_recorder_attr_get_time_limit(recorder_h recorder, int *second);
  *      Since 2.3.1, this API also works for audio recorder when its state is #RECORDER_STATE_READY.
  * @see	recorder_attr_get_audio_device()
  */
-int mmsvc_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_device_e device);
+int legacy_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_device_e device);
 
 /**
  * @brief Gets the audio device for recording.
@@ -1212,7 +1212,7 @@ int mmsvc_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_dev
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_audio_device()
  */
-int mmsvc_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_device_e *device);
+int legacy_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_device_e *device);
 
 /**
  * @brief Sets the sampling rate of an audio stream.
@@ -1229,7 +1229,7 @@ int mmsvc_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_dev
  *      Since 2.3.1, this API also works for audio recorder when its state is #RECORDER_STATE_READY.
  * @see	recorder_attr_get_audio_samplerate()
  */
-int mmsvc_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate);
+int legacy_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate);
 
 /**
  * @brief Gets the sampling rate of an audio stream.
@@ -1243,7 +1243,7 @@ int mmsvc_recorder_attr_set_audio_samplerate(recorder_h recorder, int samplerate
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_audio_samplerate()
  */
-int mmsvc_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerate);
+int legacy_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerate);
 
 /**
  * @brief Sets the bitrate of an audio encoder.
@@ -1259,7 +1259,7 @@ int mmsvc_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplerat
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see	recorder_attr_get_audio_encoder_bitrate()
  */
-int mmsvc_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitrate);
+int legacy_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitrate);
 
 /**
  * @brief Sets the bitrate of a video encoder.
@@ -1275,7 +1275,7 @@ int mmsvc_recorder_attr_set_audio_encoder_bitrate(recorder_h recorder, int bitra
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see	recorder_attr_get_video_encoder_bitrate()
  */
-int mmsvc_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitrate);
+int legacy_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitrate);
 
 /**
  * @brief Gets the bitrate of an audio encoder.
@@ -1289,7 +1289,7 @@ int mmsvc_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitra
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_audio_encoder_bitrate()
  */
-int mmsvc_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitrate);
+int legacy_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitrate);
 
 /**
  * @brief Gets the bitrate of a video encoder.
@@ -1303,7 +1303,7 @@ int mmsvc_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bitr
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_audio_encoder_bitrate()
  */
-int mmsvc_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitrate);
+int legacy_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitrate);
 
 /**
  * @brief Sets the mute state of a recorder.
@@ -1317,7 +1317,7 @@ int mmsvc_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bitr
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_is_muted()
  */
-int mmsvc_recorder_attr_set_mute(recorder_h recorder, bool enable);
+int legacy_recorder_attr_set_mute(recorder_h recorder, bool enable);
 
 /**
  * @brief Gets the mute state of a recorder.
@@ -1332,7 +1332,7 @@ int mmsvc_recorder_attr_set_mute(recorder_h recorder, bool enable);
  * @exception #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_mute()
  */
-bool mmsvc_recorder_attr_is_muted(recorder_h recorder);
+bool legacy_recorder_attr_is_muted(recorder_h recorder);
 
 /**
  * @brief Sets the recording motion rate.
@@ -1353,7 +1353,7 @@ bool mmsvc_recorder_attr_is_muted(recorder_h recorder);
  * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
  * @see	recorder_attr_get_recording_motion_rate()
  */
-int mmsvc_recorder_attr_set_recording_motion_rate(recorder_h recorder , double rate);
+int legacy_recorder_attr_set_recording_motion_rate(recorder_h recorder , double rate);
 
 /**
  * @brief Gets the recording motion rate.
@@ -1373,7 +1373,7 @@ int mmsvc_recorder_attr_set_recording_motion_rate(recorder_h recorder , double r
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_recording_motion_rate()
  */
-int mmsvc_recorder_attr_get_recording_motion_rate(recorder_h recorder , double *rate);
+int legacy_recorder_attr_get_recording_motion_rate(recorder_h recorder , double *rate);
 
 /**
  * @brief Sets the number of the audio channel.
@@ -1392,7 +1392,7 @@ int mmsvc_recorder_attr_get_recording_motion_rate(recorder_h recorder , double *
  *      Since 2.3.1, this API also works for audio recorder when its state is #RECORDER_STATE_READY.
  * @see	recorder_attr_get_audio_channel()
  */
-int mmsvc_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count);
+int legacy_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count);
 
 /**
  * @brief Gets the number of the audio channel.
@@ -1406,7 +1406,7 @@ int mmsvc_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_audio_channel()
  */
-int mmsvc_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_count);
+int legacy_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_count);
 
 
 /**
@@ -1421,7 +1421,7 @@ int mmsvc_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_coun
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_get_orientation_tag()
  */
-int mmsvc_recorder_attr_set_orientation_tag(recorder_h recorder,  recorder_rotation_e orientation);
+int legacy_recorder_attr_set_orientation_tag(recorder_h recorder,  recorder_rotation_e orientation);
 
 /**
  * @brief Gets the video orientation in a video metadata tag.
@@ -1435,7 +1435,7 @@ int mmsvc_recorder_attr_set_orientation_tag(recorder_h recorder,  recorder_rotat
  * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
  * @see	recorder_attr_set_orientation_tag()
  */
-int mmsvc_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rotation_e *orientation);
+int legacy_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rotation_e *orientation);
 
 /**
  * @}
