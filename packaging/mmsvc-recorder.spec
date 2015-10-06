@@ -1,8 +1,8 @@
 Name:       mmsvc-recorder
-Summary:    A Recorder library in Tizen Native API
+Summary:    A Recorder module for muse server
 Version:    0.2.2
-Release:    0
-Group:      Multimedia/API
+Release:    1
+Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
@@ -20,16 +20,16 @@ BuildRequires:  pkgconfig(capi-media-audio-io)
 
 
 %description
-A Recorder library in Tizen Native API
+A Recorder module for muse servier and native recorder API.
 
 
 %package devel
-Summary:  A Recorder library in Tizen C API (Development)
+Summary:  A Recorder module for muse server (Development)
 Requires: %{name} = %{version}-%{release}
 
 
 %description devel
-A Recorder library in Tizen Native API Development Package.
+Development related files of a recorder module for muse server.
 
 
 %prep
@@ -62,9 +62,9 @@ cp LICENSE.APLv2 %{buildroot}/usr/share/license/%{name}
 %{_libdir}/liblegacy-recorder.so*
 %{_libdir}/libmuse-recorder.so*
 %{_datadir}/license/%{name}
-%{_includedir}/media/legacy_recorder.h
 
 %files devel
-%{_includedir}/media/muse_recorder.h
-%{_includedir}/media/muse_recorder_msg.h
+%{_includedir}/media/*.h
 %{_libdir}/pkgconfig/*.pc
+%{_libdir}/liblegacy-recorder.so
+%{_libdir}/libmuse-recorder.so

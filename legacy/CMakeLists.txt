@@ -5,7 +5,6 @@ SET(submodule "recorder")
 
 # for package file
 SET(dependents "dlog mm-camcorder capi-media-audio-io audio-session-mgr")
-SET(pc_dependents "capi-base-common capi-media-audio-io")
 
 SET(fw_name "${service}-${submodule}")
 
@@ -48,13 +47,4 @@ SET_TARGET_PROPERTIES(${fw_name}
 )
 
 INSTALL(TARGETS ${fw_name} DESTINATION ${LIB_INSTALL_DIR})
-INSTALL(
-        DIRECTORY ${INC_DIR}/ DESTINATION include/media
-        FILES_MATCHING
-        PATTERN "*_private.h" EXCLUDE
-        PATTERN "${INC_DIR}/*.h"
-        )
 
-SET(PC_NAME ${fw_name})
-SET(PC_REQUIRED ${pc_dependents})
-SET(PC_LDFLAGS -l${fw_name})
