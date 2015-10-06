@@ -10,6 +10,9 @@ SET(fw_name "${service}-${submodule}")
 
 PROJECT(${fw_name})
 
+SET(dependents "dlog mused mm-common glib-2.0 capi-media-audio-io audio-session-mgr")
+SET(pc_dependents "dlog capi-media-audio-io")
+
 SET(CMAKE_INSTALL_PREFIX ${prefix})
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
 
@@ -23,6 +26,10 @@ IF("${ARCH}" STREQUAL "arm")
 ENDIF("${ARCH}" STREQUAL "arm")
 
 ADD_DEFINITIONS("-DPREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
+
+SET(PC_NAME ${fw_name})
+SET(PC_REQUIRED ${pc_dependents})
+SET(PC_LDFLAGS -lmuse-recorder)
 
 CONFIGURE_FILE(
     ${fw_name}.pc.in
