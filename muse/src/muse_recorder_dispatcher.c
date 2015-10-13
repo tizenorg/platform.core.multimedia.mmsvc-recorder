@@ -23,16 +23,20 @@
 #include <stdio.h>
 #include "muse_recorder.h"
 #include "muse_recorder_msg.h"
-#include "muse_core.h"
-#include "muse_core_ipc.h"
-#include "mm_types.h"
 #include "legacy_recorder.h"
+#include <muse_core.h>
+#include <muse_core_ipc.h>
+#include <muse_core_security.h>
+#include <mm_types.h>
 #include <dlog.h>
 
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
 #define LOG_TAG "MMSVC_RECORDER"
+
+#define RECORDER_PRIVILEGE_NAME "http://tizen.org/privilege/recorder"
+
 
 void _recorder_disp_recording_limit_reached_cb(recorder_recording_limit_type_e type, void *user_data)
 {
@@ -217,9 +221,22 @@ int recorder_dispatcher_create(muse_module_h module)
 	muse_recorder_info_s *recorder_data;
 	tbm_bufmgr bufmgr;
 	int recorder_type;
+	int client_fd = -1;
 	intptr_t handle;
+
 	LOGD("Enter");
+
 	muse_recorder_msg_get(recorder_type, muse_core_client_get_msg(module));
+
+	/* privilege check */
+	client_fd = muse_core_client_get_msg_fd(module);
+	if (!muse_core_security_check_cynara(client_fd, RECORDER_PRIVILEGE_NAME)) {
+		LOGE("security check failed");
+		ret = RECORDER_ERROR_PERMISSION_DENIED;
+		muse_recorder_msg_return(api, ret, module);
+		return MUSE_RECORDER_ERROR_NONE;
+	}
+
 	if (recorder_type == MUSE_RECORDER_TYPE_VIDEO) {
 		muse_recorder_msg_get_pointer(camera_handle, muse_core_client_get_msg(module));
 		LOGD("video type, camera handle : 0x%x", camera_handle);
