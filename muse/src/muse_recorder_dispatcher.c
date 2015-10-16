@@ -27,6 +27,7 @@
 #include <muse_core.h>
 #include <muse_core_ipc.h>
 #include <muse_core_security.h>
+#include <muse_camera.h>
 #include <mm_types.h>
 #include <dlog.h>
 
@@ -218,6 +219,7 @@ int recorder_dispatcher_create(muse_module_h module)
 	muse_recorder_api_e api = MUSE_RECORDER_API_CREATE;
 	recorder_h recorder;
 	intptr_t camera_handle;
+	muse_camera_handle_s *muse_camera = NULL;
 	muse_recorder_info_s *recorder_data;
 	tbm_bufmgr bufmgr;
 	int recorder_type;
@@ -239,8 +241,18 @@ int recorder_dispatcher_create(muse_module_h module)
 
 	if (recorder_type == MUSE_RECORDER_TYPE_VIDEO) {
 		muse_recorder_msg_get_pointer(camera_handle, muse_core_client_get_msg(module));
-		LOGD("video type, camera handle : 0x%x", camera_handle);
-		ret = legacy_recorder_create_videorecorder((camera_h)camera_handle, &recorder);
+		if (camera_handle == NULL) {
+			LOGE("NULL handle");
+			ret = RECORDER_ERROR_INVALID_PARAMETER;
+			muse_recorder_msg_return(api, ret, module);
+			return MUSE_RECORDER_ERROR_NONE;
+		}
+
+		muse_camera = (muse_recorder_info_s *)camera_handle;
+
+		LOGD("video type, camera handle : %p", muse_camera->camera_handle);
+
+		ret = legacy_recorder_create_videorecorder(muse_camera->camera_handle, &recorder);
 	} else if (recorder_type == MUSE_RECORDER_TYPE_AUDIO) {
 		LOGD("audio type");
 		ret = legacy_recorder_create_audiorecorder(&recorder);

@@ -37,7 +37,6 @@
 #define LOG_TAG "TIZEN_N_RECORDER"
 
 #define LOWSET_DECIBEL -300.0
-#define RECORDER_PATH_RECORDER_RESOURCE    "/usr/share/sounds/mm-camcorder/recorder_resource"
 
 
 /*
@@ -494,7 +493,6 @@ static int _recorder_check_and_set_attribute(recorder_h recorder, const char *at
 int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 {
 	int ret = MM_ERROR_NONE;
-	int resource_fd = -1;
 	recorder_s *handle = NULL;
 	int preview_format = MM_PIXEL_FORMAT_NV12;
 	int camera_device_count = 0;
@@ -513,23 +511,6 @@ int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 		LOGE("[%s] camera is using in another recorder.", __func__);
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
-
-	resource_fd = open(RECORDER_PATH_RECORDER_RESOURCE, O_RDONLY);
-	if (resource_fd < 0) {
-		LOGE("failed to open recorder resource : errno [%d]", errno);
-		if (errno == EPERM || errno == EACCES) {
-			LOGE("permission denied");
-			return RECORDER_ERROR_PERMISSION_DENIED;
-		} else {
-			LOGE("invalid operation");
-			return RECORDER_ERROR_INVALID_OPERATION;
-		}
-	}
-
-	close(resource_fd);
-	resource_fd = -1;
-
-	LOGW("permission check done");
 
 	handle = (recorder_s*)malloc( sizeof(recorder_s) );
 	if(handle == NULL){
