@@ -1987,3 +1987,33 @@ int  legacy_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rota
 
 	return __convert_recorder_error_code(__func__, ret);
 }
+
+
+int legacy_recorder_attr_set_root_directory(recorder_h recorder,  const char *root_directory)
+{
+	int ret = MM_ERROR_NONE;
+	recorder_s *handle = (recorder_s *)recorder;
+	MMCamcorderStateType mmstate = MM_CAMCORDER_STATE_NONE;
+
+	if (recorder == NULL) {
+		LOGE("handle is NULL");
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
+	if (root_directory == NULL) {
+		LOGE("filename is NULL");
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
+	mm_camcorder_get_state(handle->mm_handle, &mmstate);
+	if (mmstate >= MM_CAMCORDER_STATE_RECORDING) {
+		LOGE("invalid state %d", mmstate);
+		return RECORDER_ERROR_INVALID_STATE;
+	}
+
+	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
+					  MMCAM_ROOT_DIRECTORY, root_directory, strlen(root_directory),
+					  NULL);
+
+	return __convert_recorder_error_code(__func__, ret);
+}

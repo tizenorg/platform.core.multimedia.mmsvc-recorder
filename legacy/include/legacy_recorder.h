@@ -1438,6 +1438,22 @@ int legacy_recorder_attr_set_orientation_tag(recorder_h recorder,  recorder_rota
 int legacy_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rotation_e *orientation);
 
 /**
+ * @brief Sets the root directory to check available space.
+ * @details This function sets root directory to recorder, and it's used to check available space to write recording file.
+ * @since_tizen 3.0
+ * @param[in]	recorder	The handle to the media recorder
+ * @param[in]	root_directory The root directory of the client process
+ * @return @c 0 on success, otherwise a negative error value
+ * @retval #RECORDER_ERROR_NONE Successful
+ * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
+ * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
+ * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
+ * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY.
+ */
+int legacy_recorder_attr_set_root_directory(recorder_h recorder, const char *root_directory);
+
+/**
  * @}
  */
 

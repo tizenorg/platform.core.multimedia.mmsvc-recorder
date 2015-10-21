@@ -1092,6 +1092,26 @@ int recorder_dispatcher_attr_get_orientation_tag(muse_module_h module)
 	return MUSE_RECORDER_ERROR_NONE;
 }
 
+int recorder_dispatcher_attr_set_root_directory(muse_module_h module)
+{
+	int ret = RECORDER_ERROR_NONE;
+	intptr_t handle;
+	char root_directory[MUSE_RECORDER_MSG_MAX_LENGTH] = {0,};
+	muse_recorder_api_e api = MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY;
+
+	handle = muse_core_ipc_get_handle(module);
+
+	muse_recorder_msg_get_string(root_directory, muse_core_client_get_msg(module));
+
+	ret = legacy_recorder_attr_set_root_directory((recorder_h)handle, root_directory);
+
+	LOGD("handle : 0x%x, root_directory : %s", handle, root_directory);
+
+	muse_recorder_msg_return(api, ret, module);
+
+	return MUSE_RECORDER_ERROR_NONE;
+}
+
 int (*dispatcher[MUSE_RECORDER_API_MAX]) (muse_module_h module) = {
 	recorder_dispatcher_create, /* MUSE_RECORDER_API_CREATE, */
 	recorder_dispatcher_destroy, /* MUSE_RECORDER_API_DESTROY, */
@@ -1149,4 +1169,5 @@ int (*dispatcher[MUSE_RECORDER_API_MAX]) (muse_module_h module) = {
 	recorder_dispatcher_attr_get_audio_channel, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_CHANNEL, */
 	recorder_dispatcher_attr_set_orientation_tag, /* MUSE_RECORDER_API_ATTR_SET_ORIENTATION_TAG, */
 	recorder_dispatcher_attr_get_orientation_tag, /* MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG, */
+	recorder_dispatcher_attr_set_root_directory, /* MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY, */
 };
