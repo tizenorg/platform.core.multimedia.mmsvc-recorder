@@ -192,6 +192,29 @@ typedef const char* STRING;
 	}while(0)
 
 /**
+ * @brief Send the message from proxy to module via ipc, adding 1 more parameter.
+ * @param[in] api The enumeration of the corresponding api.
+ * @param[in] fd The socket fd that connected to the module via ipc.
+ * @param[in] cb_info The callback information, waiting for the ack from the module.
+ * @param[in] type The data type of the parameter.
+ * @param[in] param A single parameter to be included in the message.
+ */
+#define muse_recorder_msg_send1_no_return(api, fd, cb_info, type, param) \
+	do{	\
+		char *__sndMsg__; \
+		int __len__; \
+		type __value__ = (type)param; \
+		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_##type, #param, __value__, \
+				0); \
+		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
+		if (__len__ <= 0) { \
+			LOGE("sending message failed"); \
+		} \
+		muse_core_msg_json_factory_free(__sndMsg__); \
+	}while(0)
+
+/**
  * @brief Send the message from proxy to module via ipc, adding 2 more parameters.
  * @param[in] api The enumeration of the corresponding api.
  * @param[in] fd The socket fd that connected to the module via ipc.
