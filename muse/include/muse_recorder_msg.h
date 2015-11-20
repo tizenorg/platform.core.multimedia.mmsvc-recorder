@@ -31,47 +31,57 @@ extern "C" {
 /**
  * @brief Definition for the handle parameter.
  */
-#define PARAM_HANDLE			"handle"
+#define PARAM_HANDLE        "handle"
 
 /**
  * @brief Definition for the ret parameter.
  */
-#define PARAM_RET				"ret"
+#define PARAM_RET           "ret"
 
 /**
  * @brief Definition for the event parameter.
  */
-#define PARAM_EVENT			"event"
+#define PARAM_EVENT         "event"
+
+/**
+ * @brief Definition for the api class parameter.
+ */
+#define PARAM_API_CLASS     "api_class"
+
+/**
+ * @brief Definition for the event class parameter.
+ */
+#define PARAM_EVENT_CLASS   "event_class"
 
 /**
  * @brief Definition for the error parameter.
  */
-#define PARAM_ERROR			"error"
+#define PARAM_ERROR         "error"
 
 /**
  * @brief Definition for the tbm key parameter.
  */
-#define PARAM_TBM_KEY			"t_key"
+#define PARAM_TBM_KEY       "t_key"
 
 /**
  * @brief Definition for the display mode parameter.
  */
-#define PARAM_DISPLAY_MODE	"display_mode"
+#define PARAM_DISPLAY_MODE  "display_mode"
 
 /**
  * @brief Definition for the device type parameter.
  */
-#define PARAM_DEVICE_TYPE		"device_type"
+#define PARAM_DEVICE_TYPE   "device_type"
 
 /**
  * @brief Definition for the recorder type parameter audio/video
  */
- #define PARAM_RECORDER_TYPE	"recorder_type"
+ #define PARAM_RECORDER_TYPE "recorder_type"
 
 /**
  * @brief Definition for the camera handle ipc parameter
  */
-#define PARAM_CAMERA_HANDLE	"camera_handle"
+#define PARAM_CAMERA_HANDLE "camera_handle"
 
 /**
  * @brief Definition for the INTEGER type.
@@ -158,10 +168,7 @@ typedef const char* STRING;
 #define muse_recorder_msg_send(api, fd, cb_info, ret) \
 	do{	\
 		char *__sndMsg__; \
-		callback_cb_info_s *cb_info_s; \
 		int __len__; \
-		cb_info_s = (callback_cb_info_s *)cb_info; \
-		cb_info_s->activating[api] = 0; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, 0); \
 		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
 		if (__len__ <= 0) { \
@@ -287,14 +294,16 @@ typedef const char* STRING;
 /**
  * @brief Returning the ack message from the server to client side.
  * @param[in] api The enumeration of the corresponding api.
+ * @param[in] class The enumeration of the api class.
  * @param[out] ret The delivered return value from the module to proxy side.
  * @param[in] module The module info for the ipc transportation.
  */
-#define muse_recorder_msg_return(api, ret, module) \
+#define muse_recorder_msg_return(api, class, ret, module) \
 	do{	\
 		char *__sndMsg__; \
 		int __len__; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
 				MUSE_TYPE_INT, PARAM_RET, ret, \
 				0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
@@ -308,17 +317,19 @@ typedef const char* STRING;
 /**
  * @brief Returning the ack message from the server to client side.
  * @param[in] api The enumeration of the corresponding api.
+ * @param[in] class The enumeration of the api class.
  * @param[out] ret The delivered return value from the module to proxy side.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] type The data type of the parameter.
  * @param[in] param A parameter to be included in the message.
  */
-#define muse_recorder_msg_return1(api, ret, module, type, param) \
+#define muse_recorder_msg_return1(api, class, ret, module, type, param) \
 	do{	\
 		char *__sndMsg__; \
 		int __len__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
 				MUSE_TYPE_INT, PARAM_RET, ret, \
 				MUSE_TYPE_##type, #param, __value__, \
 				0); \
@@ -333,6 +344,7 @@ typedef const char* STRING;
 /**
  * @brief Returning the ack message from the server to client side, adding 2 parameters.
  * @param[in] api The enumeration of the corresponding api.
+ * @param[in] class The enumeration of the api class.
  * @param[out] ret The delivered return value from the module to proxy side.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] type1 The data type of the parameter.
@@ -340,13 +352,14 @@ typedef const char* STRING;
  * @param[in] type2 The data type of the parameter.
  * @param[in] param2 The 2nd parameter to be included in the message.
  */
-#define muse_recorder_msg_return2(api, ret, module, type1, param1, type2, param2) \
+#define muse_recorder_msg_return2(api, class, ret, module, type1, param1, type2, param2) \
 	do{	\
 		char *__sndMsg__; \
 		int __len__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
 				MUSE_TYPE_INT, PARAM_RET, ret, \
 				MUSE_TYPE_##type1, #param1, __value1__, \
 				MUSE_TYPE_##type2, #param2, __value2__, \
@@ -362,6 +375,7 @@ typedef const char* STRING;
 /**
  * @brief Returning the ack message from the server to client side, adding 3 parameters.
  * @param[in] api The enumeration of the corresponding api.
+ * @param[in] class The enumeration of the api class.
  * @param[out] ret The delivered return value from the module to proxy side.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] type1 The data type of the parameter.
@@ -371,7 +385,7 @@ typedef const char* STRING;
  * @param[in] type3 The data type of the parameter.
  * @param[in] param3 The 3rd parameter to be included in the message.
  */
-#define muse_recorder_msg_return3(api, ret, module, type1, param1, type2, param2, type3, param3) \
+#define muse_recorder_msg_return3(api, class, ret, module, type1, param1, type2, param2, type3, param3) \
 	do{	\
 		char *__sndMsg__; \
 		int __len__; \
@@ -379,6 +393,7 @@ typedef const char* STRING;
 		type2 __value2__ = (type2)param2; \
 		type3 __value3__ = (type3)param3; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
 				MUSE_TYPE_INT, PARAM_RET, ret, \
 				MUSE_TYPE_##type1, #param1, __value1__, \
 				MUSE_TYPE_##type2, #param2, __value2__, \
@@ -395,18 +410,20 @@ typedef const char* STRING;
 /**
  * @brief Returning the ack message from the server to client side, adding array parameter.
  * @param[in] api The enumeration of the corresponding api.
+ * @param[in] class The enumeration of the api class.
  * @param[out] ret The delivered return value from the module to proxy side.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] param The array data parameter to be included in the message.
  * @param[in] length The length of the array.
  * @param[in] datum_size The size of the array.
  */
-#define muse_recorder_msg_return_array(api, ret, module, param, length, datum_size) \
+#define muse_recorder_msg_return_array(api, class, ret, module, param, length, datum_size) \
 	do{	\
 		char *__sndMsg__; \
 		int __len__; \
 		int *__value__ = (int *)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
+				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
 				MUSE_TYPE_INT, PARAM_RET, ret, \
 				MUSE_TYPE_INT, #length, length, \
 				MUSE_TYPE_ARRAY, #param, \
@@ -425,14 +442,16 @@ typedef const char* STRING;
 /**
  * @brief Returning the event ack message from the server to client side.
  * @param[in] api The enumeration of the corresponding api.
- * @param[out] ret The delivered return value from the module to proxy side.
+ * @param[in] event The enumeration of the event.
+ * @param[in] class The enumeration of the event class.
  * @param[in] module The module info for the ipc transportation.
  */
-#define muse_recorder_msg_event(api, event, fd) \
+#define muse_recorder_msg_event(api, event, class, module) \
 	do{	\
 		char *__sndMsg__; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
 				MUSE_TYPE_INT, PARAM_EVENT, event, \
+				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
 				0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
@@ -441,17 +460,19 @@ typedef const char* STRING;
 /**
  * @brief Returning the event ack message from the server to client side, adding a parameter.
  * @param[in] api The enumeration of the corresponding api.
- * @param[out] ret The delivered return value from the module to proxy side.
+ * @param[in] event The enumeration of the event.
+ * @param[in] class The enumeration of the event class.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] type The data type of the parameter.
  * @param[in] param A parameter to be included in the message.
  */
-#define muse_recorder_msg_event1(api, event, module, type, param) \
+#define muse_recorder_msg_event1(api, event, class, module, type, param) \
 	do{	\
 		char *__sndMsg__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
 				MUSE_TYPE_INT, PARAM_EVENT, event, \
+				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
 				MUSE_TYPE_##type, #param, __value__, \
 				0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
@@ -461,19 +482,21 @@ typedef const char* STRING;
 /**
  * @brief Returning the event ack message from the server to client side, adding 2 parameters.
  * @param[in] api The enumeration of the corresponding api.
- * @param[out] ret The delivered return value from the module to proxy side.
+ * @param[in] event The enumeration of the event.
+ * @param[in] class The enumeration of the event class.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] param1 The 1st parameter to be included in the message.
  * @param[in] type2 The data type of the parameter.
  * @param[in] param2 The 2nd parameter to be included in the message.
  */
-#define muse_recorder_msg_event2(api, event, module, type1, param1, type2, param2) \
+#define muse_recorder_msg_event2(api, event, class, module, type1, param1, type2, param2) \
 	do{	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
 				MUSE_TYPE_INT, PARAM_EVENT, event, \
+				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
 				MUSE_TYPE_##type1, #param1, __value1__, \
 				MUSE_TYPE_##type2, #param2, __value2__, \
 				0); \
@@ -484,7 +507,8 @@ typedef const char* STRING;
 /**
  * @brief Returning the event ack message from the server to client side, adding 3 parameters.
  * @param[in] api The enumeration of the corresponding api.
- * @param[out] ret The delivered return value from the module to proxy side.
+ * @param[in] event The enumeration of the event.
+ * @param[in] class The enumeration of the event class.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] param1 The 1st parameter to be included in the message.
  * @param[in] type2 The data type of the parameter.
@@ -492,7 +516,7 @@ typedef const char* STRING;
  * @param[in] type3 The data type of the parameter.
  * @param[in] param3 The 3rd parameter to be included in the message.
  */
-#define muse_recorder_msg_event3(api, event, module, type1, param1, type2, param2, type3, param3) \
+#define muse_recorder_msg_event3(api, event, class, module, type1, param1, type2, param2, type3, param3) \
 	do{	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
@@ -500,6 +524,7 @@ typedef const char* STRING;
 		type3 __value3__ = (type3)param3; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
 				MUSE_TYPE_INT, PARAM_EVENT, event, \
+				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
 				MUSE_TYPE_##type1, #param1, __value1__, \
 				MUSE_TYPE_##type2, #param2, __value2__, \
 				MUSE_TYPE_##type3, #param3, __value3__, \
@@ -511,7 +536,8 @@ typedef const char* STRING;
 /**
  * @brief Returning the event ack message from the server to client side, adding 5 parameters.
  * @param[in] api The enumeration of the corresponding api.
- * @param[out] ret The delivered return value from the module to proxy side.
+ * @param[in] event The enumeration of the event.
+ * @param[in] class The enumeration of the event class.
  * @param[in] module The module info for the ipc transportation.
  * @param[in] param1 The 1st parameter to be included in the message.
  * @param[in] type2 The data type of the parameter.
@@ -523,7 +549,7 @@ typedef const char* STRING;
  * @param[in] type5 The data type of the parameter.
  * @param[in] param5 The 5th parameter to be included in the message.
  */
-#define muse_recorder_msg_event5(api, event, module, type1, param1, type2, param2, type3, param3, type4, param4, type5, param5) \
+#define muse_recorder_msg_event5(api, event, class, module, type1, param1, type2, param2, type3, param3, type4, param4, type5, param5) \
 	do{	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
@@ -533,6 +559,7 @@ typedef const char* STRING;
 		type5 __value5__ = (type5)param5; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
 				MUSE_TYPE_INT, PARAM_EVENT, event, \
+				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
 				MUSE_TYPE_##type1, #param1, __value1__, \
 				MUSE_TYPE_##type2, #param2, __value2__, \
 				MUSE_TYPE_##type3, #param3, __value3__, \

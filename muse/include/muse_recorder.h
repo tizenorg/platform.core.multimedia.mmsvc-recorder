@@ -96,6 +96,15 @@ typedef enum {
 } muse_recorder_api_e;
 
 /**
+ * @brief Enumeration for the muse recorder API class.
+ */
+typedef enum {
+	MUSE_RECORDER_API_CLASS_IMMEDIATE,
+	MUSE_RECORDER_API_CLASS_THREAD_SUB,
+	MUSE_RECORDER_API_CLASS_NUM
+} muse_recorder_api_class_e;
+
+/**
  * @brief Enumeration for the muse recorder events.
  */
 typedef enum {
@@ -111,6 +120,15 @@ typedef enum {
 	MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_VIDEO_RESOLUTION,
 	MUSE_RECORDER_EVENT_TYPE_NUM
 } muse_recorder_event_e;
+
+/**
+ * @brief Enumeration for the muse recorder events class.
+ */
+typedef enum {
+	MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+	MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+	MUSE_RECORDER_EVENT_CLASS_NUM
+} muse_recorder_event_class_e;
 
 /**
  * @brief The structure type for muse camera errors.
