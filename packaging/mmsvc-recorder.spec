@@ -1,6 +1,6 @@
 Name:       mmsvc-recorder
 Summary:    A Recorder module for muse server
-Version:    0.2.8
+Version:    0.2.9
 Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0
