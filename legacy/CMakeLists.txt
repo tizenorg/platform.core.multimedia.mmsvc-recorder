@@ -4,7 +4,7 @@ SET(service "legacy")
 SET(submodule "recorder")
 
 # for package file
-SET(dependents "dlog mm-camcorder capi-media-audio-io audio-session-mgr")
+SET(dependents "dlog mm-camcorder capi-media-audio-io")
 
 SET(fw_name "${service}-${submodule}")
 

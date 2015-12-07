@@ -1,6 +1,6 @@
 Name:       mmsvc-recorder
 Summary:    A Recorder module for muse server
-Version:    0.2.8
+Version:    0.2.9
 Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0
@@ -8,7 +8,6 @@ Source0:    %{name}-%{version}.tar.gz
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(dlog)
 BuildRequires:  pkgconfig(mm-camcorder)
-BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(capi-base-common)
 BuildRequires:  pkgconfig(mmsvc-camera)
 BuildRequires:  pkgconfig(mm-common)

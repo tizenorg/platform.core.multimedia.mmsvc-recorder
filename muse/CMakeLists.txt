@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 SET(service "muse")
 SET(submodule "recorder")
 
-SET(dependents "dlog mused mm-common glib-2.0 capi-media-audio-io audio-session-mgr")
+SET(dependents "dlog mused mm-common glib-2.0 capi-media-audio-io")
 SET(fw_name "${service}-${submodule}")
 
 PROJECT(${fw_name})
