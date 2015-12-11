@@ -163,7 +163,7 @@ typedef enum {
 /**
  * @brief Definition for the max message length.
  */
-#define MUSE_RECORDER_MSG_MAX_LENGTH		256
+#define MUSE_RECORDER_MSG_MAX_LENGTH		512
 
 /**
  * @brief Definition for the wait time of the ipc callback.
