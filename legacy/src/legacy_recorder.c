@@ -33,7 +33,7 @@
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "TIZEN_N_RECORDER"
+#define LOG_TAG "LEGACY_RECORDER"
 
 #define LOWSET_DECIBEL -300.0
 
