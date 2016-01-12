@@ -1007,15 +1007,16 @@ int legacy_recorder_get_filename(recorder_h recorder,  char **filename)
 
 int legacy_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format)
 {
-	int format_table[6] = { MM_FILE_FORMAT_3GP, /* RECORDER_FILE_FORMAT_3GP */
+	int format_table[7] = { MM_FILE_FORMAT_3GP, /* RECORDER_FILE_FORMAT_3GP */
 	                        MM_FILE_FORMAT_MP4, /* RECORDER_FILE_FORMAT_MP4 */
 	                        MM_FILE_FORMAT_AMR, /* RECORDER_FILE_FORMAT_AMR */
 	                        MM_FILE_FORMAT_AAC, /* RECORDER_FILE_FORMAT_ADTS */
 	                        MM_FILE_FORMAT_WAV, /* RECORDER_FILE_FORMAT_WAV */
-	                        MM_FILE_FORMAT_OGG  /* RECORDER_FILE_FORMAT_OGG */
+	                        MM_FILE_FORMAT_OGG,  /* RECORDER_FILE_FORMAT_OGG */
+	                        MM_FILE_FORMAT_M2TS /* RECORDER_FILE_FORMAT_M2TS */
 	};
 
-	if (format < RECORDER_FILE_FORMAT_3GP || format > RECORDER_FILE_FORMAT_OGG) {
+	if (format < RECORDER_FILE_FORMAT_3GP || format > RECORDER_FILE_FORMAT_M2TS) {
 		LOGE("invalid format %d", format);
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
@@ -1062,6 +1063,9 @@ int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e 
 			break;
 		case MM_FILE_FORMAT_OGG:
 			*format = RECORDER_FILE_FORMAT_OGG;
+			break;
+		case MM_FILE_FORMAT_M2TS:
+			*format = RECORDER_FILE_FORMAT_M2TS;
 			break;
 		default :
 			ret = MM_ERROR_CAMCORDER_INTERNAL;
@@ -1336,6 +1340,9 @@ int legacy_recorder_foreach_supported_file_format(recorder_h recorder, recorder_
 			break;
 		case MM_FILE_FORMAT_WAV:
 			format = RECORDER_FILE_FORMAT_WAV;
+			break;
+		case MM_FILE_FORMAT_M2TS:
+			format = RECORDER_FILE_FORMAT_M2TS;
 			break;
 		default :
 			format = -1;
