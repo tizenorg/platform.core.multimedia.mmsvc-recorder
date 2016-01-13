@@ -34,7 +34,7 @@
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "MMSVC_RECORDER"
+#define LOG_TAG "MUSED_RECORDER"
 
 #define RECORDER_PRIVILEGE_NAME "http://tizen.org/privilege/recorder"
 
@@ -501,8 +501,10 @@ int recorder_dispatcher_destroy(muse_module_h module)
 	if (ret == RECORDER_ERROR_NONE) {
 		_recorder_remove_export_data(module, 0, TRUE);
 
-		muse_recorder->bufmgr = NULL;
 		g_mutex_clear(&muse_recorder->list_lock);
+
+		muse_recorder->bufmgr = NULL;
+
 		free(muse_recorder);
 		muse_recorder = NULL;
 	} else {
@@ -1903,4 +1905,54 @@ int (*dispatcher[MUSE_RECORDER_API_MAX]) (muse_module_h module) = {
 	recorder_dispatcher_attr_get_orientation_tag, /* MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG, */
 	recorder_dispatcher_attr_set_root_directory, /* MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY, */
 	recorder_dispatcher_return_buffer, /* MUSE_RECORDER_API_RETURN_BUFFER, */
+};
+
+
+/******************/
+/* cmd dispatcher */
+/******************/
+static int recorder_cmd_dispatcher_shutdown(muse_module_h module)
+{
+	recorder_state_e state = RECORDER_STATE_NONE;
+	muse_recorder_handle_s *muse_recorder = NULL;
+
+	muse_recorder = (muse_recorder_handle_s *)muse_core_ipc_get_handle(module);
+	if (muse_recorder == NULL) {
+		LOGE("NULL handle");
+		return MUSE_RECORDER_ERROR_NONE;
+	}
+
+	legacy_recorder_get_state(muse_recorder->recorder_handle, &state);
+
+	LOGW("current state : %d", state);
+
+	switch (state) {
+	case RECORDER_STATE_PAUSED:
+	case RECORDER_STATE_RECORDING:
+		legacy_recorder_commit(muse_recorder->recorder_handle);
+	case RECORDER_STATE_READY:
+		legacy_recorder_unprepare(muse_recorder->recorder_handle);
+	case RECORDER_STATE_CREATED:
+		if (legacy_recorder_destroy(muse_recorder->recorder_handle) == RECORDER_ERROR_NONE) {
+			_recorder_remove_export_data(module, 0, TRUE);
+
+			g_mutex_clear(&muse_recorder->list_lock);
+
+			muse_recorder->bufmgr = NULL;
+
+			free(muse_recorder);
+			muse_recorder = NULL;
+		}
+	default:
+		break;
+	}
+
+	LOGW("done");
+
+	return MUSE_RECORDER_ERROR_NONE;
+}
+
+int (*cmd_dispatcher[MUSE_MODULE_EVENT_MAX])(muse_module_h module) = {
+	recorder_cmd_dispatcher_shutdown, /* MUSE_MODULE_EVENT_SHUTDOWN */
+	NULL, /* MUSE_MODULE_EVENT_DEBUG_INFO_DUMP */
 };
