@@ -26,7 +26,7 @@
 #include <muse_core.h>
 #include <muse_core_ipc.h>
 #include <muse_core_security.h>
-#include <muse_camera.h>
+#include <muse_camera_internal.h>
 #include <mm_types.h>
 #include <dlog.h>
 #include "legacy_recorder_internal.h"
