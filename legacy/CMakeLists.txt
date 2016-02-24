@@ -4,9 +4,11 @@ SET(service "legacy")
 SET(submodule "recorder")
 
 # for package file
-SET(dependents "dlog mm-camcorder capi-media-audio-io legacy-camera")
+SET(dependents "dlog mm-camcorder legacy-camera")
+SET(dependents2 "capi-media-audio-io")
 
 SET(fw_name "${service}-${submodule}")
+SET(fw_name2 "only_cflags")
 
 PROJECT(${fw_name})
 
@@ -21,6 +23,10 @@ pkg_check_modules(${fw_name} REQUIRED ${dependents})
 FOREACH(flag ${${fw_name}_CFLAGS})
     SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
 ENDFOREACH(flag)
+pkg_check_modules(${fw_name2} REQUIRED ${dependents2})
+FOREACH(flag2 ${${fw_name2}_CFLAGS})
+    SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag2}")
+ENDFOREACH(flag2)
 
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS} -fPIC -Wall -Wextra -Wno-array-bounds -Wno-empty-body -Wno-ignored-qualifiers -Wno-unused-parameter -Wshadow -Wwrite-strings -Wswitch-default -Wno-unused-but-set-parameter -Wno-unused-but-set-variable")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -g")

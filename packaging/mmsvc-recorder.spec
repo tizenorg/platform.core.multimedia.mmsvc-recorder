@@ -1,7 +1,7 @@
 Name:       mmsvc-recorder
 Summary:    A Recorder module for muse server
 Version:    0.2.14
-Release:    0
+Release:    1
 Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    %{name}-%{version}.tar.gz
@@ -14,7 +14,6 @@ BuildRequires:  pkgconfig(legacy-camera)
 BuildRequires:  pkgconfig(mm-common)
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(mused)
-BuildRequires:  pkgconfig(capi-media-tool)
 BuildRequires:  pkgconfig(capi-media-audio-io)
 
 

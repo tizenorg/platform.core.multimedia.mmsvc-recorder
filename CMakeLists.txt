@@ -9,7 +9,7 @@ SET(fw_name "${service}-${submodule}")
 
 PROJECT(${fw_name})
 
-SET(pc_dependents "dlog capi-media-audio-io")
+SET(pc_dependents "dlog")
 
 SET(PC_NAME ${fw_name})
 SET(PC_REQUIRED ${pc_dependents})
