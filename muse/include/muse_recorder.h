@@ -92,6 +92,7 @@ typedef enum {
 	MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG, //55
 	MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY,
 	MUSE_RECORDER_API_RETURN_BUFFER,
+	MUSE_RECORDER_API_SET_SOUND_STREAM_INFO,
 	MUSE_RECORDER_API_MAX
 } muse_recorder_api_e;
 
@@ -168,7 +169,7 @@ typedef enum {
 /**
  * @brief Definition for the wait time of the ipc callback.
  */
-#define CALLBACK_TIME_OUT 3
+#define RECORDER_CALLBACK_TIME_OUT 3
 
 
 #ifdef __cplusplus

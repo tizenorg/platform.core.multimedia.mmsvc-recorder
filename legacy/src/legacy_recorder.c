@@ -2023,3 +2023,35 @@ int legacy_recorder_attr_set_root_directory(recorder_h recorder,  const char *ro
 
 	return __convert_recorder_error_code(__func__, ret);
 }
+
+
+int legacy_recorder_set_sound_stream_info(recorder_h recorder, char *stream_type, int stream_index)
+{
+	int ret = MM_ERROR_NONE;
+	recorder_s *handle = (recorder_s *)recorder;
+	MMCamcorderStateType mmstate = MM_CAMCORDER_STATE_NONE;
+
+	if (recorder == NULL) {
+		LOGE("handle is NULL");
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
+	if (stream_type == NULL || stream_index < 0) {
+		LOGE("invalid parameter %p %d", stream_type, stream_index);
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
+	mm_camcorder_get_state(handle->mm_handle, &mmstate);
+	if (mmstate >= MM_CAMCORDER_STATE_RECORDING) {
+		LOGE("invalid state %d", mmstate);
+		return RECORDER_ERROR_INVALID_STATE;
+	}
+
+	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
+		MMCAM_SOUND_STREAM_TYPE, stream_type, strlen(stream_type),
+		MMCAM_SOUND_STREAM_INDEX, stream_index,
+		NULL);
+
+	return __convert_recorder_error_code(__func__, ret);
+}
+

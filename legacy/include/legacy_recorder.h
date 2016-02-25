@@ -656,6 +656,28 @@ int legacy_recorder_set_file_format(recorder_h recorder, recorder_file_format_e 
 int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e *format);
 
 
+/**
+ * @brief Sets the recorder's sound manager stream information.
+ * @since_tizen 3.0
+ * @remarks You can set sound stream information including audio routing.
+ *          For more details, please refer to sound_manager.h
+ * @param[in]	recorder		The handle to the media recorder
+ * @param[in]	stream_type		The type of sound manager info
+ * @param[in]	stream_index	The index of sound manager info
+ * @return @c 0 on success, otherwise a negative error value
+ * @retval #RECORDER_ERROR_NONE Successful
+ * @retval #RECORDER_ERROR_INVALID_PARAMETER Invalid parameter
+ * @retval #RECORDER_ERROR_INVALID_STATE Invalid state
+ * @retval #RECORDER_ERROR_PERMISSION_DENIED The access to the resources can not be granted
+ * @retval #RECORDER_ERROR_NOT_SUPPORTED The feature is not supported
+ * @pre The recorder state must be #RECORDER_STATE_CREATED or #RECORDER_STATE_READY
+ * @see #sound_stream_info_h
+ * @see sound_manager_create_stream_information()
+ * @see sound_manager_destroy_stream_information()
+ */
+int legacy_recorder_set_sound_stream_info(recorder_h recorder, char *stream_type, int stream_index);
+
+
  /**
  * @}
 */

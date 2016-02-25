@@ -175,7 +175,7 @@ typedef const char* STRING;
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} else \
-			ret = client_wait_for_cb_return(api, cb_info, CALLBACK_TIME_OUT); \
+			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
 	}while(0)
 
@@ -202,7 +202,7 @@ typedef const char* STRING;
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} else \
-			ret = client_wait_for_cb_return(api, cb_info, CALLBACK_TIME_OUT); \
+			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
 	}while(0)
 
@@ -255,7 +255,7 @@ typedef const char* STRING;
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} else \
-			ret = client_wait_for_cb_return(api, cb_info, CALLBACK_TIME_OUT); \
+			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
 	}while(0)
 
@@ -287,7 +287,7 @@ typedef const char* STRING;
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} else \
-			ret = client_wait_for_cb_return(api, cb_info, CALLBACK_TIME_OUT); \
+			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
 	}while(0)
 
