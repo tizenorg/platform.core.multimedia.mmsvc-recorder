@@ -1846,65 +1846,95 @@ int recorder_dispatcher_return_buffer(muse_module_h module)
 	return MUSE_RECORDER_ERROR_NONE;
 }
 
+
+int recorder_dispatcher_set_sound_stream_info(muse_module_h module)
+{
+	int ret = RECORDER_ERROR_NONE;
+	char stream_type[MUSE_RECORDER_MSG_MAX_LENGTH] = {0,};
+	int stream_index = 0;
+	muse_recorder_api_e api = MUSE_RECORDER_API_SET_SOUND_STREAM_INFO;
+	muse_recorder_api_class_e class = MUSE_RECORDER_API_CLASS_IMMEDIATE;
+	muse_recorder_handle_s *muse_recorder = NULL;
+
+	muse_recorder = (muse_recorder_handle_s *)muse_core_ipc_get_handle(module);
+	if (muse_recorder == NULL) {
+		LOGE("NULL handle");
+		ret = RECORDER_ERROR_INVALID_OPERATION;
+		muse_recorder_msg_return(api, class, ret, module);
+		return MUSE_RECORDER_ERROR_NONE;
+	}
+
+	muse_recorder_msg_get_string(stream_type, muse_core_client_get_msg(module));
+	muse_recorder_msg_get(stream_index, muse_core_client_get_msg(module));
+
+	ret = legacy_recorder_set_sound_stream_info(muse_recorder->recorder_handle, stream_type, stream_index);
+
+	muse_recorder_msg_return(api, class, ret, module);
+
+	return MUSE_RECORDER_ERROR_NONE;
+}
+
+
 int (*dispatcher[MUSE_RECORDER_API_MAX]) (muse_module_h module) = {
-	recorder_dispatcher_create, /* MUSE_RECORDER_API_CREATE, */
-	recorder_dispatcher_destroy, /* MUSE_RECORDER_API_DESTROY, */
-	recorder_dispatcher_get_state, /* MUSE_RECORDER_API_GET_STATE, */
-	recorder_dispatcher_prepare, /* MUSE_RECORDER_API_PREPARE, */
-	recorder_dispatcher_unprepare, /* MUSE_RECORDER_API_UNPREPARE, */
-	recorder_dispatcher_start, /* MUSE_RECORDER_API_START, */
-	recorder_dispatcher_pause, /* MUSE_RECORDER_API_PAUSE, */
-	recorder_dispatcher_commit, /* MUSE_RECORDER_API_COMMIT, */
-	recorder_dispatcher_cancel, /* MUSE_RECORDER_API_CANCEL, */
-	recorder_dispatcher_set_video_resolution, /* MUSE_RECORDER_API_SET_VIDEO_RESOLUTION, */
-	recorder_dispatcher_get_video_resolution, /* MUSE_RECORDER_API_GET_VIDEO_RESOLUTION, */
-	recorder_dispatcher_foreach_supported_video_resolution, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_RESOLUTION, */
-	recorder_dispatcher_get_audio_level, /* MUSE_RECORDER_API_GET_AUDIO_LEVEL, */
-	recorder_dispatcher_set_filename, /* MUSE_RECORDER_API_SET_FILENAME, */
-	recorder_dispatcher_get_filename, /* MUSE_RECORDER_API_GET_FILENAME, */
-	recorder_dispatcher_set_file_format, /* MUSE_RECORDER_API_SET_FILE_FORMAT, */
-	recorder_dispatcher_get_file_format, /* MUSE_RECORDER_API_GET_FILE_FORMAT, */
-	recorder_dispatcher_set_state_changed_cb, /* MUSE_RECORDER_API_SET_STATE_CHANGED_CB, */
-	recorder_dispatcher_unset_state_changed_cb, /* MUSE_RECORDER_API_UNSET_STATE_CHANGED_CB, */
-	recorder_dispatcher_set_interrupted_cb, /* MUSE_RECORDER_API_SET_INTERRUPTED_CB, */
-	recorder_dispatcher_unset_interrupted_cb, /* MUSE_RECORDER_API_UNSET_INTERRUPTED_CB, */
-	recorder_dispatcher_set_audio_stream_cb, /* MUSE_RECORDER_API_SET_AUDIO_STREAM_CB, */
-	recorder_dispatcher_unset_audio_stream_cb, /* MUSE_RECORDER_API_UNSET_AUDIO_STREAM_CB, */
-	recorder_dispatcher_set_error_cb, /* MUSE_RECORDER_API_SET_ERROR_CB, */
-	recorder_dispatcher_unset_error_cb, /* MUSE_RECORDER_API_UNSET_ERROR_CB, */
-	recorder_dispatcher_set_recording_status_cb, /* MUSE_RECORDER_API_SET_RECORDING_STATUS_CB, */
-	recorder_dispatcher_unset_recording_status_cb, /* MUSE_RECORDER_API_UNSET_RECORDING_STATUS_CB, */
-	recorder_dispatcher_set_recording_limit_reached_cb, /* MUSE_RECORDER_API_SET_RECORDING_LIMIT_RECHEAD_CB, */
-	recorder_dispatcher_unset_recording_limit_reached_cb, /* MUSE_RECORDER_API_UNSET_RECORDING_LIMIT_RECHEAD_CB, */
-	recorder_dispatcher_foreach_supported_file_format, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_FILE_FORMAT, */
-	recorder_dispatcher_attr_set_size_limit, /* MUSE_RECORDER_API_ATTR_SET_SIZE_LIMIT, */
-	recorder_dispatcher_attr_set_time_limit, /* MUSE_RECORDER_API_ATTR_SET_TIME_LIMIT, */
-	recorder_dispatcher_attr_set_audio_device, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_DEVICE, */
-	recorder_dispatcher_set_audio_encoder, /* MUSE_RECORDER_API_SET_AUDIO_ENCODER, */
-	recorder_dispatcher_get_audio_encoder, /* MUSE_RECORDER_API_GET_AUDIO_ENCODER, */
-	recorder_dispatcher_set_video_encoder, /* MUSE_RECORDER_API_SET_VIDEO_ENCODER, */
-	recorder_dispatcher_get_video_encoder, /* MUSE_RECORDER_API_GET_VIDEO_ENCODER, */
-	recorder_dispatcher_attr_set_audio_samplerate, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_SAMPLERATE, */
-	recorder_dispatcher_attr_set_audio_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_ENCODER_BITRATE, */
-	recorder_dispatcher_attr_set_video_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_SET_VIDEO_ENCODER_BITRATE, */
-	recorder_dispatcher_attr_get_size_limit, /* MUSE_RECORDER_API_ATTR_GET_SIZE_LIMIT, */
-	recorder_dispatcher_attr_get_time_limit, /* MUSE_RECORDER_API_ATTR_GET_TIME_LIMIT, */
-	recorder_dispatcher_attr_get_audio_device, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_DEVICE, */
-	recorder_dispatcher_attr_get_audio_samplerate, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_SAMPLERATE, */
-	recorder_dispatcher_attr_get_audio_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_ENCODER_BITRATE, */
-	recorder_dispatcher_attr_get_video_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_GET_VIDEO_ENCODER_BITRATE, */
-	recorder_dispatcher_foreach_supported_audio_encoder, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_AUDIO_ENCODER, */
-	recorder_dispatcher_foreach_supported_video_encoder, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_ENCODER, */
-	recorder_dispatcher_attr_set_mute, /* MUSE_RECORDER_API_ATTR_SET_MUTE, */
-	recorder_dispatcher_attr_is_muted, /* MUSE_RECORDER_API_ATTR_IS_MUTED, */
-	recorder_dispatcher_attr_set_recording_motion_rate, /* MUSE_RECORDER_API_ATTR_SET_RECORDING_MOTION_RATE, */
-	recorder_dispatcher_attr_get_recording_motion_rate, /* MUSE_RECORDER_API_ATTR_GET_RECORDING_MOTION_RATE, */
-	recorder_dispatcher_attr_set_audio_channel, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_CHANNEL, */
-	recorder_dispatcher_attr_get_audio_channel, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_CHANNEL, */
-	recorder_dispatcher_attr_set_orientation_tag, /* MUSE_RECORDER_API_ATTR_SET_ORIENTATION_TAG, */
-	recorder_dispatcher_attr_get_orientation_tag, /* MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG, */
-	recorder_dispatcher_attr_set_root_directory, /* MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY, */
-	recorder_dispatcher_return_buffer, /* MUSE_RECORDER_API_RETURN_BUFFER, */
+	recorder_dispatcher_create, /* MUSE_RECORDER_API_CREATE */
+	recorder_dispatcher_destroy, /* MUSE_RECORDER_API_DESTROY */
+	recorder_dispatcher_get_state, /* MUSE_RECORDER_API_GET_STATE */
+	recorder_dispatcher_prepare, /* MUSE_RECORDER_API_PREPARE */
+	recorder_dispatcher_unprepare, /* MUSE_RECORDER_API_UNPREPARE */
+	recorder_dispatcher_start, /* MUSE_RECORDER_API_START */
+	recorder_dispatcher_pause, /* MUSE_RECORDER_API_PAUSE */
+	recorder_dispatcher_commit, /* MUSE_RECORDER_API_COMMIT */
+	recorder_dispatcher_cancel, /* MUSE_RECORDER_API_CANCEL */
+	recorder_dispatcher_set_video_resolution, /* MUSE_RECORDER_API_SET_VIDEO_RESOLUTION */
+	recorder_dispatcher_get_video_resolution, /* MUSE_RECORDER_API_GET_VIDEO_RESOLUTION */
+	recorder_dispatcher_foreach_supported_video_resolution, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_RESOLUTION */
+	recorder_dispatcher_get_audio_level, /* MUSE_RECORDER_API_GET_AUDIO_LEVEL */
+	recorder_dispatcher_set_filename, /* MUSE_RECORDER_API_SET_FILENAME */
+	recorder_dispatcher_get_filename, /* MUSE_RECORDER_API_GET_FILENAME */
+	recorder_dispatcher_set_file_format, /* MUSE_RECORDER_API_SET_FILE_FORMAT */
+	recorder_dispatcher_get_file_format, /* MUSE_RECORDER_API_GET_FILE_FORMAT */
+	recorder_dispatcher_set_state_changed_cb, /* MUSE_RECORDER_API_SET_STATE_CHANGED_CB */
+	recorder_dispatcher_unset_state_changed_cb, /* MUSE_RECORDER_API_UNSET_STATE_CHANGED_CB */
+	recorder_dispatcher_set_interrupted_cb, /* MUSE_RECORDER_API_SET_INTERRUPTED_CB */
+	recorder_dispatcher_unset_interrupted_cb, /* MUSE_RECORDER_API_UNSET_INTERRUPTED_CB */
+	recorder_dispatcher_set_audio_stream_cb, /* MUSE_RECORDER_API_SET_AUDIO_STREAM_CB */
+	recorder_dispatcher_unset_audio_stream_cb, /* MUSE_RECORDER_API_UNSET_AUDIO_STREAM_CB */
+	recorder_dispatcher_set_error_cb, /* MUSE_RECORDER_API_SET_ERROR_CB */
+	recorder_dispatcher_unset_error_cb, /* MUSE_RECORDER_API_UNSET_ERROR_CB */
+	recorder_dispatcher_set_recording_status_cb, /* MUSE_RECORDER_API_SET_RECORDING_STATUS_CB */
+	recorder_dispatcher_unset_recording_status_cb, /* MUSE_RECORDER_API_UNSET_RECORDING_STATUS_CB */
+	recorder_dispatcher_set_recording_limit_reached_cb, /* MUSE_RECORDER_API_SET_RECORDING_LIMIT_RECHEAD_CB */
+	recorder_dispatcher_unset_recording_limit_reached_cb, /* MUSE_RECORDER_API_UNSET_RECORDING_LIMIT_RECHEAD_CB */
+	recorder_dispatcher_foreach_supported_file_format, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_FILE_FORMAT */
+	recorder_dispatcher_attr_set_size_limit, /* MUSE_RECORDER_API_ATTR_SET_SIZE_LIMIT */
+	recorder_dispatcher_attr_set_time_limit, /* MUSE_RECORDER_API_ATTR_SET_TIME_LIMIT */
+	recorder_dispatcher_attr_set_audio_device, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_DEVICE */
+	recorder_dispatcher_set_audio_encoder, /* MUSE_RECORDER_API_SET_AUDIO_ENCODER */
+	recorder_dispatcher_get_audio_encoder, /* MUSE_RECORDER_API_GET_AUDIO_ENCODER */
+	recorder_dispatcher_set_video_encoder, /* MUSE_RECORDER_API_SET_VIDEO_ENCODER */
+	recorder_dispatcher_get_video_encoder, /* MUSE_RECORDER_API_GET_VIDEO_ENCODER */
+	recorder_dispatcher_attr_set_audio_samplerate, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_SAMPLERATE */
+	recorder_dispatcher_attr_set_audio_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_ENCODER_BITRATE */
+	recorder_dispatcher_attr_set_video_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_SET_VIDEO_ENCODER_BITRATE */
+	recorder_dispatcher_attr_get_size_limit, /* MUSE_RECORDER_API_ATTR_GET_SIZE_LIMIT */
+	recorder_dispatcher_attr_get_time_limit, /* MUSE_RECORDER_API_ATTR_GET_TIME_LIMIT */
+	recorder_dispatcher_attr_get_audio_device, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_DEVICE */
+	recorder_dispatcher_attr_get_audio_samplerate, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_SAMPLERATE */
+	recorder_dispatcher_attr_get_audio_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_ENCODER_BITRATE */
+	recorder_dispatcher_attr_get_video_encoder_bitrate, /* MUSE_RECORDER_API_ATTR_GET_VIDEO_ENCODER_BITRATE */
+	recorder_dispatcher_foreach_supported_audio_encoder, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_AUDIO_ENCODER */
+	recorder_dispatcher_foreach_supported_video_encoder, /* MUSE_RECORDER_API_FOREACH_SUPPORTED_VIDEO_ENCODER */
+	recorder_dispatcher_attr_set_mute, /* MUSE_RECORDER_API_ATTR_SET_MUTE */
+	recorder_dispatcher_attr_is_muted, /* MUSE_RECORDER_API_ATTR_IS_MUTED */
+	recorder_dispatcher_attr_set_recording_motion_rate, /* MUSE_RECORDER_API_ATTR_SET_RECORDING_MOTION_RATE */
+	recorder_dispatcher_attr_get_recording_motion_rate, /* MUSE_RECORDER_API_ATTR_GET_RECORDING_MOTION_RATE */
+	recorder_dispatcher_attr_set_audio_channel, /* MUSE_RECORDER_API_ATTR_SET_AUDIO_CHANNEL */
+	recorder_dispatcher_attr_get_audio_channel, /* MUSE_RECORDER_API_ATTR_GET_AUDIO_CHANNEL */
+	recorder_dispatcher_attr_set_orientation_tag, /* MUSE_RECORDER_API_ATTR_SET_ORIENTATION_TAG */
+	recorder_dispatcher_attr_get_orientation_tag, /* MUSE_RECORDER_API_ATTR_GET_ORIENTATION_TAG */
+	recorder_dispatcher_attr_set_root_directory, /* MUSE_RECORDER_API_ATTR_SET_ROOT_DIRECTORY */
+	recorder_dispatcher_return_buffer, /* MUSE_RECORDER_API_RETURN_BUFFER */
+	recorder_dispatcher_set_sound_stream_info /* MUSE_RECORDER_API_SET_SOUND_STREAM_INFO */
 };
 
 
