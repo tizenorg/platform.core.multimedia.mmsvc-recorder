@@ -1368,6 +1368,11 @@ int legacy_recorder_attr_set_size_limit(recorder_h recorder, int kbyte)
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
+	if (kbyte < 0) {
+		LOGE("invalid kbyte %d", kbyte);
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
 					  MMCAM_TARGET_MAX_SIZE, kbyte,
 					  NULL);
@@ -1383,6 +1388,11 @@ int legacy_recorder_attr_set_time_limit(recorder_h recorder, int second)
 
 	if (recorder == NULL) {
 		LOGE("NULL pointer handle");
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
+	if (second < 0) {
+		LOGE("invalid second %d", second);
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
@@ -1595,6 +1605,10 @@ int legacy_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitr
 	if (handle->camera_device_count == 0) {
 		LOGE("RECORDER_ERROR_NOT_SUPPORTED");
 		return RECORDER_ERROR_NOT_SUPPORTED;
+	}
+	if (bitrate <= 0) {
+		LOGE("invalid bitrate %d", bitrate);
+		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
@@ -1875,6 +1889,11 @@ int legacy_recorder_attr_set_recording_motion_rate(recorder_h recorder, double r
 		LOGE("RECORDER_ERROR_NOT_SUPPORTED");
 		return RECORDER_ERROR_NOT_SUPPORTED;
 	}
+	if (rate <= 0.0) {
+		LOGE("invalid rate %lf", rate);
+		return RECORDER_ERROR_INVALID_PARAMETER;
+	}
+
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
 					  MMCAM_CAMERA_RECORDING_MOTION_RATE, rate,
 					  NULL);
@@ -1911,7 +1930,7 @@ int legacy_recorder_attr_get_recording_motion_rate(recorder_h recorder, double *
 
 int legacy_recorder_attr_set_audio_channel(recorder_h recorder, int channel_count)
 {
-	if (channel_count < 1) {
+	if (channel_count < 1 || channel_count > 2) {
 		LOGE("invalid channel %d", channel_count);
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
