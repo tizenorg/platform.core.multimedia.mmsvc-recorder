@@ -1982,7 +1982,8 @@ static int recorder_cmd_dispatcher_shutdown(muse_module_h module)
 	return MUSE_RECORDER_ERROR_NONE;
 }
 
-int (*cmd_dispatcher[MUSE_MODULE_EVENT_MAX])(muse_module_h module) = {
-	recorder_cmd_dispatcher_shutdown, /* MUSE_MODULE_EVENT_SHUTDOWN */
-	NULL, /* MUSE_MODULE_EVENT_DEBUG_INFO_DUMP */
+int (*cmd_dispatcher[MUSE_MODULE_COMMAND_MAX])(muse_module_h module) = {
+	NULL, /* MUSE_MODULE_COMMAND_INITIALIZE */
+	recorder_cmd_dispatcher_shutdown, /* MUSE_MODULE_COMMAND_SHUTDOWN */
+	NULL, /* MUSE_MODULE_COMMAND_DEBUG_INFO_DUMP */
 };
