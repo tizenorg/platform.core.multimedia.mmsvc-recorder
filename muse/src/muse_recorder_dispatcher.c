@@ -1983,6 +1983,7 @@ static int recorder_cmd_dispatcher_shutdown(muse_module_h module)
 }
 
 int (*cmd_dispatcher[MUSE_MODULE_EVENT_MAX])(muse_module_h module) = {
+	NULL, /* MUSE_MODULE_EVENT_INITIALIZE */
 	recorder_cmd_dispatcher_shutdown, /* MUSE_MODULE_EVENT_SHUTDOWN */
 	NULL, /* MUSE_MODULE_EVENT_DEBUG_INFO_DUMP */
 };
