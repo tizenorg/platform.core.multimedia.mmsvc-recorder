@@ -1418,10 +1418,12 @@ int legacy_recorder_attr_set_audio_device(recorder_h recorder, recorder_audio_de
 int legacy_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_e codec)
 {
 	recorder_s *handle = (recorder_s *)recorder;
-	int audio_table[4] = { MM_AUDIO_CODEC_AMR,      /* RECORDER_AUDIO_CODEC_AMR */
-			       MM_AUDIO_CODEC_AAC,      /* RECORDER_AUDIO_CODEC_AAC */
-			       MM_AUDIO_CODEC_VORBIS,   /* RECORDER_AUDIO_CODEC_VORBIS */
-			       MM_AUDIO_CODEC_WAVE      /* RECORDER_AUDIO_CODEC_PCM */
+	int audio_table[5] = {
+		MM_AUDIO_CODEC_AMR,     /* RECORDER_AUDIO_CODEC_AMR */
+		MM_AUDIO_CODEC_AAC,     /* RECORDER_AUDIO_CODEC_AAC */
+		MM_AUDIO_CODEC_VORBIS,  /* RECORDER_AUDIO_CODEC_VORBIS */
+		MM_AUDIO_CODEC_WAVE,    /* RECORDER_AUDIO_CODEC_PCM */
+		MM_AUDIO_CODEC_MP3      /* RECORDER_AUDIO_CODEC_MP3 */
 	};
 
 	if (recorder == NULL) {
@@ -1429,8 +1431,7 @@ int legacy_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
-	if (codec != RECORDER_AUDIO_CODEC_DISABLE &&
-	    (codec < RECORDER_AUDIO_CODEC_AMR || codec > RECORDER_AUDIO_CODEC_PCM)) {
+	if (codec < RECORDER_AUDIO_CODEC_DISABLE || codec > RECORDER_AUDIO_CODEC_MP3) {
 		LOGE("invalid parameter : codec %d", codec);
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
@@ -1440,7 +1441,8 @@ int legacy_recorder_set_audio_encoder(recorder_h recorder, recorder_audio_codec_
 		return RECORDER_ERROR_NOT_SUPPORTED;
 	}
 
-	return _recorder_check_and_set_attribute(recorder, MMCAM_AUDIO_ENCODER, codec == RECORDER_AUDIO_CODEC_DISABLE ? RECORDER_AUDIO_CODEC_DISABLE : audio_table[codec]);
+	return _recorder_check_and_set_attribute(recorder, MMCAM_AUDIO_ENCODER,
+		codec == RECORDER_AUDIO_CODEC_DISABLE ? RECORDER_AUDIO_CODEC_DISABLE : audio_table[codec]);
 }
 
 
