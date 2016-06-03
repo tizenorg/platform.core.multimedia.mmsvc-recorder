@@ -1960,8 +1960,10 @@ static int recorder_cmd_dispatcher_shutdown(muse_module_h module)
 	case RECORDER_STATE_PAUSED:
 	case RECORDER_STATE_RECORDING:
 		legacy_recorder_commit(muse_recorder->recorder_handle);
+		/* fall through */
 	case RECORDER_STATE_READY:
 		legacy_recorder_unprepare(muse_recorder->recorder_handle);
+		/* fall through */
 	case RECORDER_STATE_CREATED:
 		if (legacy_recorder_destroy(muse_recorder->recorder_handle) == RECORDER_ERROR_NONE) {
 			_recorder_remove_export_data(module, 0, TRUE);
@@ -1973,6 +1975,7 @@ static int recorder_cmd_dispatcher_shutdown(muse_module_h module)
 			free(muse_recorder);
 			muse_recorder = NULL;
 		}
+		break;
 	default:
 		break;
 	}
