@@ -1582,6 +1582,30 @@ int recorder_dispatcher_foreach_supported_audio_encoder(muse_module_h module)
 	return MUSE_RECORDER_ERROR_NONE;
 }
 
+int recorder_dispatcher_foreach_supported_audio_encoder_by_file_format(muse_module_h module)
+{
+	int ret = RECORDER_ERROR_NONE;
+	muse_recorder_api_e api = MUSE_RECORDER_API_FOREACH_SUPPORTED_AUDIO_ENCODER_BY_FILE_FORMAT;
+	muse_recorder_api_class_e class = MUSE_RECORDER_API_CLASS_THREAD_SUB;
+	muse_recorder_handle_s *muse_recorder = NULL;
+
+	muse_recorder = (muse_recorder_handle_s *)muse_core_ipc_get_handle(module);
+	if (muse_recorder == NULL) {
+		LOGE("NULL handle");
+		ret = RECORDER_ERROR_INVALID_OPERATION;
+		muse_recorder_msg_return(api, class, ret, module);
+		return MUSE_RECORDER_ERROR_NONE;
+	}
+
+	ret = legacy_recorder_foreach_supported_audio_encoder(muse_recorder->recorder_handle,
+	                                                      (recorder_supported_audio_encoder_cb)_recorder_disp_foreach_supported_audio_encoder_cb,
+	                                                      (void *)module);
+
+	muse_recorder_msg_return(api, class, ret, module);
+
+	return MUSE_RECORDER_ERROR_NONE;
+}
+
 int recorder_dispatcher_foreach_supported_video_encoder(muse_module_h module)
 {
 	int ret = RECORDER_ERROR_NONE;

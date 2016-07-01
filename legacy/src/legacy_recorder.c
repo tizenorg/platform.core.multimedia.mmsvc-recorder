@@ -1759,7 +1759,7 @@ int legacy_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorde
 		case MM_AUDIO_CODEC_AMR:
 			codec = RECORDER_AUDIO_CODEC_AMR;
 			break;
-		case MM_AUDIO_CODEC_AAC :
+		case MM_AUDIO_CODEC_AAC:
 			codec = RECORDER_AUDIO_CODEC_AAC;
 			break;
 		case MM_AUDIO_CODEC_VORBIS:
