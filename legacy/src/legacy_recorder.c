@@ -58,7 +58,7 @@ static int __convert_error_code_camera_to_recorder(int code)
 	int new_code = code;
 
 	switch (code) {
-	case CAMERA_ERROR_INVALID_STATE :
+	case CAMERA_ERROR_INVALID_STATE:
 		new_code = RECORDER_ERROR_INVALID_STATE;
 		break;
 	case CAMERA_ERROR_DEVICE:
@@ -92,56 +92,56 @@ int __convert_recorder_error_code(const char *func, int code)
 		ret = RECORDER_ERROR_NONE;
 		errorstr = "ERROR_NONE";
 		break;
-	case MM_ERROR_CAMCORDER_INVALID_ARGUMENT :
-	case MM_ERROR_COMMON_INVALID_ATTRTYPE :
+	case MM_ERROR_CAMCORDER_INVALID_ARGUMENT:
+	case MM_ERROR_COMMON_INVALID_ATTRTYPE:
 		ret = RECORDER_ERROR_INVALID_PARAMETER;
 		errorstr = "INVALID_PARAMETER";
 		break;
-	case MM_ERROR_COMMON_INVALID_PERMISSION :
+	case MM_ERROR_COMMON_INVALID_PERMISSION:
 		ret = RECORDER_ERROR_PERMISSION_DENIED;
 		errorstr = "ERROR_PERMISSION_DENIED";
 		break;
-	case MM_ERROR_CAMCORDER_NOT_INITIALIZED :
-	case MM_ERROR_CAMCORDER_INVALID_STATE :
+	case MM_ERROR_CAMCORDER_NOT_INITIALIZED:
+	case MM_ERROR_CAMCORDER_INVALID_STATE:
 		ret = RECORDER_ERROR_INVALID_STATE;
 		errorstr = "INVALID_STATE";
 		break;
-	case MM_ERROR_CAMCORDER_DEVICE :
-	case MM_ERROR_CAMCORDER_DEVICE_NOT_FOUND :
-	case MM_ERROR_CAMCORDER_DEVICE_BUSY :
-	case MM_ERROR_CAMCORDER_DEVICE_OPEN :
-	case MM_ERROR_CAMCORDER_DEVICE_IO :
-	case MM_ERROR_CAMCORDER_DEVICE_TIMEOUT :
-	case MM_ERROR_CAMCORDER_DEVICE_WRONG_JPEG :
-	case MM_ERROR_CAMCORDER_DEVICE_LACK_BUFFER :
+	case MM_ERROR_CAMCORDER_DEVICE:
+	case MM_ERROR_CAMCORDER_DEVICE_NOT_FOUND:
+	case MM_ERROR_CAMCORDER_DEVICE_BUSY:
+	case MM_ERROR_CAMCORDER_DEVICE_OPEN:
+	case MM_ERROR_CAMCORDER_DEVICE_IO:
+	case MM_ERROR_CAMCORDER_DEVICE_TIMEOUT:
+	case MM_ERROR_CAMCORDER_DEVICE_WRONG_JPEG:
+	case MM_ERROR_CAMCORDER_DEVICE_LACK_BUFFER:
 		ret = RECORDER_ERROR_DEVICE;
 		errorstr = "ERROR_DEVICE";
 		break;
-	case MM_ERROR_CAMCORDER_GST_CORE :
-	case MM_ERROR_CAMCORDER_GST_LIBRARY :
-	case MM_ERROR_CAMCORDER_GST_RESOURCE :
-	case MM_ERROR_CAMCORDER_GST_STREAM :
-	case MM_ERROR_CAMCORDER_GST_STATECHANGE :
-	case MM_ERROR_CAMCORDER_GST_NEGOTIATION :
-	case MM_ERROR_CAMCORDER_GST_LINK :
-	case MM_ERROR_CAMCORDER_GST_FLOW_ERROR :
-	case MM_ERROR_CAMCORDER_ENCODER :
-	case MM_ERROR_CAMCORDER_ENCODER_BUFFER :
-	case MM_ERROR_CAMCORDER_ENCODER_WRONG_TYPE :
-	case MM_ERROR_CAMCORDER_ENCODER_WORKING :
-	case MM_ERROR_CAMCORDER_INTERNAL :
-	case MM_ERROR_CAMCORDER_RESPONSE_TIMEOUT :
-	case MM_ERROR_CAMCORDER_CMD_IS_RUNNING :
-	case MM_ERROR_CAMCORDER_DSP_FAIL :
-	case MM_ERROR_CAMCORDER_AUDIO_EMPTY :
-	case MM_ERROR_CAMCORDER_CREATE_CONFIGURE :
-	case MM_ERROR_CAMCORDER_FILE_SIZE_OVER :
-	case MM_ERROR_CAMCORDER_DISPLAY_DEVICE_OFF :
-	case MM_ERROR_CAMCORDER_INVALID_CONDITION :
+	case MM_ERROR_CAMCORDER_GST_CORE:
+	case MM_ERROR_CAMCORDER_GST_LIBRARY:
+	case MM_ERROR_CAMCORDER_GST_RESOURCE:
+	case MM_ERROR_CAMCORDER_GST_STREAM:
+	case MM_ERROR_CAMCORDER_GST_STATECHANGE:
+	case MM_ERROR_CAMCORDER_GST_NEGOTIATION:
+	case MM_ERROR_CAMCORDER_GST_LINK:
+	case MM_ERROR_CAMCORDER_GST_FLOW_ERROR:
+	case MM_ERROR_CAMCORDER_ENCODER:
+	case MM_ERROR_CAMCORDER_ENCODER_BUFFER:
+	case MM_ERROR_CAMCORDER_ENCODER_WRONG_TYPE:
+	case MM_ERROR_CAMCORDER_ENCODER_WORKING:
+	case MM_ERROR_CAMCORDER_INTERNAL:
+	case MM_ERROR_CAMCORDER_RESPONSE_TIMEOUT:
+	case MM_ERROR_CAMCORDER_CMD_IS_RUNNING:
+	case MM_ERROR_CAMCORDER_DSP_FAIL:
+	case MM_ERROR_CAMCORDER_AUDIO_EMPTY:
+	case MM_ERROR_CAMCORDER_CREATE_CONFIGURE:
+	case MM_ERROR_CAMCORDER_FILE_SIZE_OVER:
+	case MM_ERROR_CAMCORDER_DISPLAY_DEVICE_OFF:
+	case MM_ERROR_CAMCORDER_INVALID_CONDITION:
 		ret = RECORDER_ERROR_INVALID_OPERATION;
 		errorstr = "INVALID_OPERATION";
 		break;
-	case MM_ERROR_CAMCORDER_RESOURCE_CREATION :
+	case MM_ERROR_CAMCORDER_RESOURCE_CREATION:
 	case MM_ERROR_COMMON_OUT_OF_MEMORY:
 		ret = RECORDER_ERROR_OUT_OF_MEMORY;
 		errorstr = "OUT_OF_MEMORY";
@@ -263,38 +263,36 @@ static int __mm_recorder_msg_cb(int message, void *param, void *user_data)
 			LOGE("RECORDER_POLICY_SECURITY");
 		}
 
-		if (previous_state != handle->state && handle->user_cb[_RECORDER_EVENT_TYPE_STATE_CHANGE]) {
+		if (previous_state != handle->state && handle->user_cb[_RECORDER_EVENT_TYPE_STATE_CHANGE])
 			((recorder_state_changed_cb)handle->user_cb[_RECORDER_EVENT_TYPE_STATE_CHANGE])(previous_state, handle->state, policy, handle->user_data[_RECORDER_EVENT_TYPE_STATE_CHANGE]);
-		}
 
 		/* should change intermediate state MM_CAMCORDER_STATE_READY is not valid in capi , change to NULL state */
 		if (policy != RECORDER_POLICY_NONE &&
-		    (m->state.current == MM_CAMCORDER_STATE_PAUSED || m->state.current == MM_CAMCORDER_STATE_NULL)) {
-			if (handle->user_cb[_RECORDER_EVENT_TYPE_INTERRUPTED]) {
+			(m->state.current == MM_CAMCORDER_STATE_PAUSED || m->state.current == MM_CAMCORDER_STATE_NULL)) {
+			if (handle->user_cb[_RECORDER_EVENT_TYPE_INTERRUPTED])
 				((recorder_interrupted_cb)handle->user_cb[_RECORDER_EVENT_TYPE_INTERRUPTED])(policy, previous_state, handle->state, handle->user_data[_RECORDER_EVENT_TYPE_INTERRUPTED]);
-			} else {
+			else
 				LOGW("_RECORDER_EVENT_TYPE_INTERRUPTED cb is NULL");
-			}
 		}
 		break;
 	case MM_MESSAGE_CAMCORDER_MAX_SIZE:
 	case MM_MESSAGE_CAMCORDER_NO_FREE_SPACE:
 	case MM_MESSAGE_CAMCORDER_TIME_LIMIT:
-		if (MM_MESSAGE_CAMCORDER_MAX_SIZE == message) {
+		if (MM_MESSAGE_CAMCORDER_MAX_SIZE == message)
 			type = RECORDER_RECORDING_LIMIT_SIZE;
-		} else if (MM_MESSAGE_CAMCORDER_NO_FREE_SPACE == message) {
+		else if (MM_MESSAGE_CAMCORDER_NO_FREE_SPACE == message)
 			type = RECORDER_RECORDING_LIMIT_FREE_SPACE;
-		} else {
+		else
 			type = RECORDER_RECORDING_LIMIT_TIME;
-		}
-		if (handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_LIMITED]) {
-			((recorder_recording_limit_reached_cb)handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_LIMITED])(type, handle->user_data[_RECORDER_EVENT_TYPE_RECORDING_LIMITED]);
-		}
+
+		if (handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_LIMITED])
+			((recorder_recording_limit_reached_cb)handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_LIMITED])(type,
+				handle->user_data[_RECORDER_EVENT_TYPE_RECORDING_LIMITED]);
 		break;
 	case MM_MESSAGE_CAMCORDER_RECORDING_STATUS:
-		if (handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_STATUS]) {
-			((recorder_recording_status_cb)handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_STATUS])(m->recording_status.elapsed, m->recording_status.filesize, handle->user_data[_RECORDER_EVENT_TYPE_RECORDING_STATUS]);
-		}
+		if (handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_STATUS])
+			((recorder_recording_status_cb)handle->user_cb[_RECORDER_EVENT_TYPE_RECORDING_STATUS])(m->recording_status.elapsed,
+				m->recording_status.filesize, handle->user_data[_RECORDER_EVENT_TYPE_RECORDING_STATUS]);
 		break;
 	case MM_MESSAGE_CAMCORDER_ERROR:
 		switch (m->code) {
@@ -334,14 +332,12 @@ static int __mm_recorder_msg_cb(int message, void *param, void *user_data)
 			break;
 		}
 
-		if (recorder_error != 0 && handle->user_cb[_RECORDER_EVENT_TYPE_ERROR]) {
+		if (recorder_error != 0 && handle->user_cb[_RECORDER_EVENT_TYPE_ERROR])
 			((recorder_error_cb)handle->user_cb[_RECORDER_EVENT_TYPE_ERROR])(recorder_error, handle->state, handle->user_data[_RECORDER_EVENT_TYPE_ERROR]);
-		}
 		break;
 	case MM_MESSAGE_CAMCORDER_CURRENT_VOLUME:
-		if (handle->last_max_input_level < m->rec_volume_dB) {
+		if (handle->last_max_input_level < m->rec_volume_dB)
 			handle->last_max_input_level = m->rec_volume_dB;
-		}
 		break;
 	default:
 		break;
@@ -353,21 +349,19 @@ static int __mm_recorder_msg_cb(int message, void *param, void *user_data)
 
 static int __mm_audio_stream_cb(MMCamcorderAudioStreamDataType *stream, void *user_param)
 {
-	if (user_param == NULL || stream == NULL) {
+	if (user_param == NULL || stream == NULL)
 		return 0;
-	}
 
 	recorder_s *handle = (recorder_s *)user_param;
 	audio_sample_type_e format = AUDIO_SAMPLE_TYPE_U8;
 
-	if (stream->format == MM_CAMCORDER_AUDIO_FORMAT_PCM_S16_LE) {
+	if (stream->format == MM_CAMCORDER_AUDIO_FORMAT_PCM_S16_LE)
 		format = AUDIO_SAMPLE_TYPE_S16_LE;
-	}
 
-	if( handle->user_cb[_RECORDER_EVENT_TYPE_AUDIO_STREAM] ){
+	if (handle->user_cb[_RECORDER_EVENT_TYPE_AUDIO_STREAM]) {
 		((recorder_audio_stream_cb)(handle->user_cb[_RECORDER_EVENT_TYPE_AUDIO_STREAM]))(stream->data, stream->length, format,
-												 stream->channel, stream->timestamp,
-												 handle->user_data[_RECORDER_EVENT_TYPE_AUDIO_STREAM]);
+			stream->channel, stream->timestamp,
+			handle->user_data[_RECORDER_EVENT_TYPE_AUDIO_STREAM]);
 	}
 
 	return 1;
@@ -399,9 +393,9 @@ static int _recorder_check_and_set_attribute(recorder_h recorder, const char *at
 
 	if (handle->type == _RECORDER_TYPE_AUDIO && mmstate == MM_CAMCORDER_STATE_PREPARE) {
 		mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					    MMCAM_AUDIO_DISABLE, &current_audio_disable,
-					    attribute_name, &current_value,
-					    NULL);
+			MMCAM_AUDIO_DISABLE, &current_audio_disable,
+			attribute_name, &current_value,
+			NULL);
 
 		if (current_value != set_value) {
 			LOGD("try to reset pipeline");
@@ -426,23 +420,22 @@ static int _recorder_check_and_set_attribute(recorder_h recorder, const char *at
 	if (!strcmp(attribute_name, MMCAM_AUDIO_ENCODER)) {
 		if (set_value == RECORDER_AUDIO_CODEC_DISABLE) {
 			ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-							  MMCAM_AUDIO_DISABLE, true,
-						          NULL);
+				MMCAM_AUDIO_DISABLE, true,
+				NULL);
 		} else {
 			ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-							  MMCAM_AUDIO_DISABLE, false,
-							  MMCAM_AUDIO_ENCODER, set_value,
-							  NULL);
+				MMCAM_AUDIO_DISABLE, false,
+				MMCAM_AUDIO_ENCODER, set_value,
+				NULL);
 		}
 	} else {
 		ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-						  attribute_name, set_value,
-						  NULL);
+			attribute_name, set_value,
+			NULL);
 	}
 
-	if (ret != MM_ERROR_NONE) {
+	if (ret != MM_ERROR_NONE)
 		LOGE("set [%s] failed 0x%x", attribute_name, ret);
-	}
 
 	if (reset_pipeline) {
 		ret2 = mm_camcorder_realize(handle->mm_handle);
@@ -460,18 +453,18 @@ static int _recorder_check_and_set_attribute(recorder_h recorder, const char *at
 
 		if (ret2 != MM_ERROR_NONE) {
 			restore_set = true;
+
 			/* determine return value */
-			if (ret == MM_ERROR_NONE) {
+			if (ret == MM_ERROR_NONE)
 				ret = ret2;
-			}
 		}
 	}
 
 	if (restore_set) {
 		ret2 = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-						   MMCAM_AUDIO_DISABLE, current_audio_disable,
-						   attribute_name, current_value,
-						   NULL);
+			MMCAM_AUDIO_DISABLE, current_audio_disable,
+			attribute_name, current_value,
+			NULL);
 		LOGW("restore attribute set : 0x%x", ret2);
 
 		ret2 = mm_camcorder_realize(handle->mm_handle);
@@ -511,8 +504,8 @@ int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
-	handle = (recorder_s*)malloc( sizeof(recorder_s) );
-	if(handle == NULL){
+	handle = (recorder_s*)malloc(sizeof(recorder_s));
+	if (handle == NULL) {
 		LOGE("[%s] malloc error", __func__);
 		return RECORDER_ERROR_OUT_OF_MEMORY;
 	}
@@ -529,21 +522,24 @@ int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 	legacy_recorder_get_state((recorder_h)handle, (recorder_state_e*)&handle->state);
 
 	mm_camcorder_get_attributes(handle->mm_handle, NULL,
-				    MMCAM_CAMERA_FORMAT, &preview_format,
-				    NULL);
+		MMCAM_CAMERA_FORMAT, &preview_format,
+		NULL);
 	handle->origin_preview_format = preview_format;
+
 	mm_camcorder_get_attributes(handle->mm_handle, NULL,
-				    MMCAM_RECOMMEND_PREVIEW_FORMAT_FOR_RECORDING, &preview_format,
-				    NULL);
-	ret = mm_camcorder_get_attributes(handle->mm_handle ,NULL,
-				    MMCAM_CAMERA_DEVICE_COUNT, &camera_device_count,
-				    NULL);
+		MMCAM_RECOMMEND_PREVIEW_FORMAT_FOR_RECORDING, &preview_format,
+		NULL);
+
+	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
+		MMCAM_CAMERA_DEVICE_COUNT, &camera_device_count,
+		NULL);
 	if (ret != MM_ERROR_NONE) {
 		free(handle);
 		handle = NULL;
 		LOGE("get device count error");
 		return __convert_recorder_error_code(__func__, ret);
 	}
+
 	if (camera_device_count == 0) {
 		free(handle);
 		handle = NULL;
@@ -556,11 +552,10 @@ int legacy_recorder_create_videorecorder(camera_h camera, recorder_h *recorder)
 	_camera_set_use(camera, true);
 	if (handle->state == RECORDER_STATE_CREATED) {
 		ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-						  MMCAM_CAMERA_FORMAT, preview_format,
-						  NULL);
-		if (ret == MM_ERROR_NONE) {
+			MMCAM_CAMERA_FORMAT, preview_format,
+			NULL);
+		if (ret == MM_ERROR_NONE)
 			handle->changed_preview_format = preview_format;
-		}
 	}
 	*recorder = (recorder_h)handle;
 
@@ -601,9 +596,8 @@ int legacy_recorder_create_audiorecorder(recorder_h *recorder)
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_MODE, MM_CAMCORDER_MODE_AUDIO,
-					  NULL);
-
+		MMCAM_MODE, MM_CAMCORDER_MODE_AUDIO,
+		NULL);
 	if (ret != MM_ERROR_NONE) {
 		mm_camcorder_destroy(handle->mm_handle);
 		free(handle);
@@ -611,8 +605,10 @@ int legacy_recorder_create_audiorecorder(recorder_h *recorder)
 		LOGE("AUDIO mode setting fail");
 		return __convert_recorder_error_code(__func__, ret);
 	}
-	ret = mm_camcorder_get_attributes(handle->mm_handle ,NULL,
-				    MMCAM_CAMERA_DEVICE_COUNT, &camera_device_count, NULL);
+
+	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
+		MMCAM_CAMERA_DEVICE_COUNT, &camera_device_count,
+		NULL);
 	if (ret != MM_ERROR_NONE) {
 		mm_camcorder_destroy(handle->mm_handle);
 		free(handle);
@@ -651,9 +647,8 @@ int legacy_recorder_get_state(recorder_h recorder, recorder_state_e *state)
 	recorder_s *handle = (recorder_s*)recorder;
 
 	ret = mm_camcorder_get_state(handle->mm_handle, &mmstate);
-	if (ret != MM_ERROR_NONE) {
+	if (ret != MM_ERROR_NONE)
 		return __convert_recorder_error_code(__func__, ret);
-	}
 
 	*state = __recorder_state_convert(mmstate);
 
@@ -678,26 +673,24 @@ int legacy_recorder_destroy(recorder_h recorder)
 		/* set to unsed */
 		_camera_set_use(handle->mm_source.camera, false);
 		ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-						  MMCAM_CAMERA_FORMAT, &preview_format,
-						  NULL);
+			MMCAM_CAMERA_FORMAT, &preview_format,
+			NULL);
 
 		/* preview format was changed? */
 		if (ret == MM_ERROR_NONE && preview_format == handle->changed_preview_format) {
 			ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-							  MMCAM_CAMERA_FORMAT, handle->origin_preview_format,
-							  NULL);
+				MMCAM_CAMERA_FORMAT, handle->origin_preview_format,
+				NULL);
 		}
 
-		if (ret == MM_ERROR_NONE) {
+		if (ret == MM_ERROR_NONE)
 			_camera_set_relay_mm_message_callback(handle->mm_source.camera, NULL, NULL);
-		}
 	} else {
 		ret = mm_camcorder_destroy(handle->mm_handle);
 	}
 
-	if (ret == MM_ERROR_NONE) {
+	if (ret == MM_ERROR_NONE)
 		free(handle);
-	}
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -714,9 +707,8 @@ int legacy_recorder_prepare(recorder_h recorder)
 		return RECORDER_ERROR_INVALID_PARAMETER;
 	}
 
-	if (handle->type == _RECORDER_TYPE_VIDEO) {
+	if (handle->type == _RECORDER_TYPE_VIDEO)
 		return __convert_error_code_camera_to_recorder(legacy_camera_start_preview(handle->mm_source.camera));
-	}
 
 	ret = mm_camcorder_get_state(handle->mm_handle, &mmstate);
 
@@ -753,9 +745,8 @@ int legacy_recorder_unprepare(recorder_h recorder)
 	ret = mm_camcorder_get_state(handle->mm_handle, &mmstate);
 	if (ret == MM_ERROR_NONE && mmstate == MM_CAMCORDER_STATE_PREPARE) {
 		ret = mm_camcorder_stop(handle->mm_handle);
-		if( ret != MM_ERROR_NONE){
+		if (ret != MM_ERROR_NONE)
 			LOGE("mm_camcorder_stop fail");
-		}
 	}
 
 	if (ret == MM_ERROR_NONE) {
@@ -843,9 +834,9 @@ int legacy_recorder_set_video_resolution(recorder_h recorder, int width, int hei
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_WIDTH, width,
-					  MMCAM_VIDEO_HEIGHT, height,
-					  NULL);
+		MMCAM_VIDEO_WIDTH, width,
+		MMCAM_VIDEO_HEIGHT, height,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -872,16 +863,16 @@ int legacy_recorder_get_video_resolution(recorder_h recorder, int *width, int *h
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_WIDTH, width,
-					  MMCAM_VIDEO_HEIGHT, height,
-					  NULL);
+		MMCAM_VIDEO_WIDTH, width,
+		MMCAM_VIDEO_HEIGHT, height,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
 
 
 int legacy_recorder_foreach_supported_video_resolution(recorder_h recorder,
-                                                recorder_supported_video_resolution_cb foreach_cb, void *user_data)
+	recorder_supported_video_resolution_cb foreach_cb, void *user_data)
 {
 	int i = 0;
 	int ret = MM_ERROR_NONE;
@@ -907,14 +898,12 @@ int legacy_recorder_foreach_supported_video_resolution(recorder_h recorder,
 	ret = mm_camcorder_get_attribute_info(handle->mm_handle, MMCAM_VIDEO_WIDTH, &video_width);
 	ret |= mm_camcorder_get_attribute_info(handle->mm_handle, MMCAM_VIDEO_HEIGHT, &video_height);
 
-	if (ret != MM_ERROR_NONE ) {
+	if (ret != MM_ERROR_NONE)
 		return __convert_recorder_error_code(__func__, ret);
-	}
 
 	for (i = 0 ; i < video_width.int_array.count ; i++) {
-		if (!foreach_cb(video_width.int_array.array[i], video_height.int_array.array[i], user_data)) {
+		if (!foreach_cb(video_width.int_array.array[i], video_height.int_array.array[i], user_data))
 			break;
-		}
 	}
 
 	return RECORDER_ERROR_NONE;
@@ -967,8 +956,8 @@ int legacy_recorder_set_filename(recorder_h recorder,  const char *filename)
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_TARGET_FILENAME, filename, strlen(filename),
-					  NULL);
+		MMCAM_TARGET_FILENAME, filename, strlen(filename),
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1007,13 +996,14 @@ int legacy_recorder_get_filename(recorder_h recorder,  char **filename)
 
 int legacy_recorder_set_file_format(recorder_h recorder, recorder_file_format_e format)
 {
-	int format_table[7] = { MM_FILE_FORMAT_3GP, /* RECORDER_FILE_FORMAT_3GP */
-	                        MM_FILE_FORMAT_MP4, /* RECORDER_FILE_FORMAT_MP4 */
-	                        MM_FILE_FORMAT_AMR, /* RECORDER_FILE_FORMAT_AMR */
-	                        MM_FILE_FORMAT_AAC, /* RECORDER_FILE_FORMAT_ADTS */
-	                        MM_FILE_FORMAT_WAV, /* RECORDER_FILE_FORMAT_WAV */
-	                        MM_FILE_FORMAT_OGG,  /* RECORDER_FILE_FORMAT_OGG */
-	                        MM_FILE_FORMAT_M2TS /* RECORDER_FILE_FORMAT_M2TS */
+	int format_table[7] = {
+		MM_FILE_FORMAT_3GP, /* RECORDER_FILE_FORMAT_3GP */
+		MM_FILE_FORMAT_MP4, /* RECORDER_FILE_FORMAT_MP4 */
+		MM_FILE_FORMAT_AMR, /* RECORDER_FILE_FORMAT_AMR */
+		MM_FILE_FORMAT_AAC, /* RECORDER_FILE_FORMAT_ADTS */
+		MM_FILE_FORMAT_WAV, /* RECORDER_FILE_FORMAT_WAV */
+		MM_FILE_FORMAT_OGG,  /* RECORDER_FILE_FORMAT_OGG */
+		MM_FILE_FORMAT_M2TS /* RECORDER_FILE_FORMAT_M2TS */
 	};
 
 	if (format < RECORDER_FILE_FORMAT_3GP || format > RECORDER_FILE_FORMAT_M2TS) {
@@ -1042,20 +1032,20 @@ int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e 
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_FILE_FORMAT, &mm_format,
-					  NULL);
+		MMCAM_FILE_FORMAT, &mm_format,
+		NULL);
 	if (ret == MM_ERROR_NONE) {
 		switch (mm_format) {
 		case MM_FILE_FORMAT_3GP:
 			*format = RECORDER_FILE_FORMAT_3GP;
 			break;
-		case MM_FILE_FORMAT_MP4 :
+		case MM_FILE_FORMAT_MP4:
 			*format = RECORDER_FILE_FORMAT_MP4;
 			break;
-		case MM_FILE_FORMAT_AMR :
+		case MM_FILE_FORMAT_AMR:
 			*format = RECORDER_FILE_FORMAT_AMR;
 			break;
-		case MM_FILE_FORMAT_AAC :
+		case MM_FILE_FORMAT_AAC:
 			*format = RECORDER_FILE_FORMAT_ADTS;
 			break;
 		case MM_FILE_FORMAT_WAV:
@@ -1067,7 +1057,7 @@ int legacy_recorder_get_file_format(recorder_h recorder, recorder_file_format_e 
 		case MM_FILE_FORMAT_M2TS:
 			*format = RECORDER_FILE_FORMAT_M2TS;
 			break;
-		default :
+		default:
 			ret = MM_ERROR_CAMCORDER_INTERNAL;
 			break;
 		}
@@ -1165,7 +1155,7 @@ int legacy_recorder_set_audio_stream_cb(recorder_h recorder, recorder_audio_stre
 	}
 
 	ret = mm_camcorder_set_audio_stream_callback(handle->mm_handle, __mm_audio_stream_cb, handle);
-	if (ret == MM_ERROR_NONE){
+	if (ret == MM_ERROR_NONE) {
 		handle->user_cb[_RECORDER_EVENT_TYPE_AUDIO_STREAM] = callback;
 		handle->user_data[_RECORDER_EVENT_TYPE_AUDIO_STREAM] = user_data;
 	}
@@ -1329,10 +1319,10 @@ int legacy_recorder_foreach_supported_file_format(recorder_h recorder, recorder_
 		case MM_FILE_FORMAT_3GP:
 			format = RECORDER_FILE_FORMAT_3GP;
 			break;
-		case MM_FILE_FORMAT_MP4 :
+		case MM_FILE_FORMAT_MP4:
 			format = RECORDER_FILE_FORMAT_MP4;
 			break;
-		case MM_FILE_FORMAT_AMR :
+		case MM_FILE_FORMAT_AMR:
 			format = RECORDER_FILE_FORMAT_AMR;
 			break;
 		case MM_FILE_FORMAT_AAC:
@@ -1344,14 +1334,13 @@ int legacy_recorder_foreach_supported_file_format(recorder_h recorder, recorder_
 		case MM_FILE_FORMAT_M2TS:
 			format = RECORDER_FILE_FORMAT_M2TS;
 			break;
-		default :
+		default:
 			format = -1;
 			break;
 		}
 
-		if (format != -1 && !foreach_cb(format,user_data)) {
+		if (format != -1 && !foreach_cb(format, user_data))
 			break;
-		}
 	}
 
 	return RECORDER_ERROR_NONE;
@@ -1374,8 +1363,8 @@ int legacy_recorder_attr_set_size_limit(recorder_h recorder, int kbyte)
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_TARGET_MAX_SIZE, kbyte,
-					  NULL);
+		MMCAM_TARGET_MAX_SIZE, kbyte,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1397,8 +1386,8 @@ int legacy_recorder_attr_set_time_limit(recorder_h recorder, int second)
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_TARGET_TIME_LIMIT, second,
-					  NULL);
+		MMCAM_TARGET_TIME_LIMIT, second,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1464,16 +1453,16 @@ int legacy_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_ENCODER, &mm_codec,
-					  MMCAM_AUDIO_DISABLE, &audio_disable,
-					  NULL);
+		MMCAM_AUDIO_ENCODER, &mm_codec,
+		MMCAM_AUDIO_DISABLE, &audio_disable,
+		NULL);
 
 	if (ret == MM_ERROR_NONE && audio_disable == 0) {
 		switch (mm_codec) {
-		case MM_AUDIO_CODEC_AMR :
+		case MM_AUDIO_CODEC_AMR:
 			*codec = RECORDER_AUDIO_CODEC_AMR;
 			break;
-		case MM_AUDIO_CODEC_AAC :
+		case MM_AUDIO_CODEC_AAC:
 			*codec = RECORDER_AUDIO_CODEC_AAC;
 			break;
 		case MM_AUDIO_CODEC_VORBIS:
@@ -1482,7 +1471,7 @@ int legacy_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_
 		case MM_AUDIO_CODEC_WAVE:
 			*codec = RECORDER_AUDIO_CODEC_PCM;
 			break;
-		default :
+		default:
 			ret = MM_ERROR_CAMCORDER_INTERNAL;
 			break;
 		}
@@ -1497,10 +1486,11 @@ int legacy_recorder_get_audio_encoder(recorder_h recorder, recorder_audio_codec_
 int legacy_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_e codec)
 {
 	int ret = MM_ERROR_NONE;
-	int video_table[4] = { MM_VIDEO_CODEC_H263,     /* RECORDER_VIDEO_CODEC_H263 */
-			       MM_VIDEO_CODEC_H264,     /* RECORDER_VIDEO_CODEC_H264 */
-			       MM_VIDEO_CODEC_MPEG4,    /* RECORDER_VIDEO_CODEC_MPEG4 */
-			       MM_VIDEO_CODEC_THEORA    /* RECORDER_VIDEO_CODEC_THEORA */
+	int video_table[4] = {
+		MM_VIDEO_CODEC_H263,     /* RECORDER_VIDEO_CODEC_H263 */
+		MM_VIDEO_CODEC_H264,     /* RECORDER_VIDEO_CODEC_H264 */
+		MM_VIDEO_CODEC_MPEG4,    /* RECORDER_VIDEO_CODEC_MPEG4 */
+		MM_VIDEO_CODEC_THEORA    /* RECORDER_VIDEO_CODEC_THEORA */
 	};
 	recorder_s *handle = (recorder_s *)recorder;
 
@@ -1520,8 +1510,8 @@ int legacy_recorder_set_video_encoder(recorder_h recorder, recorder_video_codec_
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_ENCODER, video_table[codec],
-					  NULL);
+		MMCAM_VIDEO_ENCODER, video_table[codec],
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1547,23 +1537,23 @@ int legacy_recorder_get_video_encoder(recorder_h recorder, recorder_video_codec_
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_ENCODER, &mm_codec,
-					  NULL);
+		MMCAM_VIDEO_ENCODER, &mm_codec,
+		NULL);
 	if (ret == MM_ERROR_NONE) {
-		switch(mm_codec) {
-		case MM_VIDEO_CODEC_H263 :
+		switch (mm_codec) {
+		case MM_VIDEO_CODEC_H263:
 			*codec = RECORDER_VIDEO_CODEC_H263;
 			break;
-		case MM_VIDEO_CODEC_H264 :
+		case MM_VIDEO_CODEC_H264:
 			*codec = RECORDER_VIDEO_CODEC_H264;
 			break;
-		case MM_VIDEO_CODEC_MPEG4 :
+		case MM_VIDEO_CODEC_MPEG4:
 			*codec = RECORDER_VIDEO_CODEC_MPEG4;
 			break;
 		case MM_VIDEO_CODEC_THEORA:
 			*codec = RECORDER_VIDEO_CODEC_THEORA;
 			break;
-		default :
+		default:
 			ret = MM_ERROR_CAMCORDER_INTERNAL;
 			break;
 		}
@@ -1614,8 +1604,8 @@ int legacy_recorder_attr_set_video_encoder_bitrate(recorder_h recorder, int bitr
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_ENCODER_BITRATE, bitrate,
-					  NULL);
+		MMCAM_VIDEO_ENCODER_BITRATE, bitrate,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1632,8 +1622,8 @@ int legacy_recorder_attr_get_size_limit(recorder_h recorder, int *kbyte)
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_TARGET_MAX_SIZE, kbyte,
-					  NULL);
+		MMCAM_TARGET_MAX_SIZE, kbyte,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1650,8 +1640,8 @@ int legacy_recorder_attr_get_time_limit(recorder_h recorder, int *second)
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_TARGET_TIME_LIMIT, second,
-					  NULL);
+		MMCAM_TARGET_TIME_LIMIT, second,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1668,8 +1658,8 @@ int legacy_recorder_attr_get_audio_device(recorder_h recorder, recorder_audio_de
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_DEVICE, device,
-					  NULL);
+		MMCAM_AUDIO_DEVICE, device,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1686,8 +1676,8 @@ int legacy_recorder_attr_get_audio_samplerate(recorder_h recorder, int *samplera
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_SAMPLERATE, samplerate,
-					  NULL);
+		MMCAM_AUDIO_SAMPLERATE, samplerate,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1704,8 +1694,8 @@ int legacy_recorder_attr_get_audio_encoder_bitrate(recorder_h recorder, int *bit
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_ENCODER_BITRATE, bitrate,
-					  NULL);
+		MMCAM_AUDIO_ENCODER_BITRATE, bitrate,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1724,9 +1714,10 @@ int legacy_recorder_attr_get_video_encoder_bitrate(recorder_h recorder, int *bit
 		LOGE("RECORDER_ERROR_NOT_SUPPORTED");
 		return RECORDER_ERROR_NOT_SUPPORTED;
 	}
+
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_VIDEO_ENCODER_BITRATE, bitrate,
-					  NULL);
+		MMCAM_VIDEO_ENCODER_BITRATE, bitrate,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -1750,16 +1741,15 @@ int legacy_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorde
 	}
 
 	ret = mm_camcorder_get_attribute_info(handle->mm_handle, MMCAM_AUDIO_ENCODER, &info);
-	if (ret != MM_ERROR_NONE) {
+	if (ret != MM_ERROR_NONE)
 		return __convert_recorder_error_code(__func__, ret);
-	}
 
 	for (i = 0 ; i < info.int_array.count ; i++) {
 		switch (info.int_array.array[i]) {
 		case MM_AUDIO_CODEC_AMR:
 			codec = RECORDER_AUDIO_CODEC_AMR;
 			break;
-		case MM_AUDIO_CODEC_AAC :
+		case MM_AUDIO_CODEC_AAC:
 			codec = RECORDER_AUDIO_CODEC_AAC;
 			break;
 		case MM_AUDIO_CODEC_VORBIS:
@@ -1768,13 +1758,13 @@ int legacy_recorder_foreach_supported_audio_encoder(recorder_h recorder, recorde
 		case MM_AUDIO_CODEC_WAVE:
 			codec = RECORDER_AUDIO_CODEC_PCM;
 			break;
-		default :
+		default:
 			codec = -1;
 			break;
 		}
-		if (codec != -1 && !foreach_cb(codec,user_data)) {
+
+		if (codec != -1 && !foreach_cb(codec, user_data))
 			break;
-		}
 	}
 
 	return RECORDER_ERROR_NONE;
@@ -1803,32 +1793,30 @@ int legacy_recorder_foreach_supported_video_encoder(recorder_h recorder, recorde
 	}
 
 	ret = mm_camcorder_get_attribute_info(handle->mm_handle, MMCAM_VIDEO_ENCODER, &info);
-	if (ret != MM_ERROR_NONE) {
+	if (ret != MM_ERROR_NONE)
 		return __convert_recorder_error_code(__func__, ret);
-	}
 
 	for (i = 0 ; i < info.int_array.count ; i++) {
-		switch (info.int_array.array[i]){
-		case MM_VIDEO_CODEC_H263 :
+		switch (info.int_array.array[i]) {
+		case MM_VIDEO_CODEC_H263:
 			codec = RECORDER_VIDEO_CODEC_H263;
 			break;
-		case MM_VIDEO_CODEC_H264 :
+		case MM_VIDEO_CODEC_H264:
 			codec = RECORDER_VIDEO_CODEC_H264;
 			break;
-		case MM_VIDEO_CODEC_MPEG4 :
+		case MM_VIDEO_CODEC_MPEG4:
 			codec = RECORDER_VIDEO_CODEC_MPEG4;
 			break;
-		case MM_VIDEO_CODEC_THEORA :
+		case MM_VIDEO_CODEC_THEORA:
 			codec = RECORDER_VIDEO_CODEC_THEORA;
 			break;
-		default :
+		default:
 			codec = -1;
 			break;
 		}
 
-		if (codec != -1 && !foreach_cb(codec,user_data)) {
+		if (codec != -1 && !foreach_cb(codec, user_data))
 			break;
-		}
 	}
 
 	return RECORDER_ERROR_NONE;
@@ -1846,8 +1834,8 @@ int legacy_recorder_attr_set_mute(recorder_h recorder, bool enable)
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_VOLUME, enable ? 0.0 : 1.0,
-					  NULL);
+		MMCAM_AUDIO_VOLUME, enable ? 0.0 : 1.0,
+		NULL);
 
 	return  __convert_recorder_error_code(__func__, ret);
 }
@@ -1865,16 +1853,15 @@ bool legacy_recorder_attr_is_muted(recorder_h recorder)
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_VOLUME, &volume,
-					  NULL);
+		MMCAM_AUDIO_VOLUME, &volume,
+		NULL);
 
 	set_last_result(__convert_recorder_error_code(__func__, ret));
 
-	if (volume == 0.0) {
+	if (volume == 0.0)
 		return true;
-	} else {
+	else
 		return false;
-	}
 }
 
 
@@ -1897,8 +1884,8 @@ int legacy_recorder_attr_set_recording_motion_rate(recorder_h recorder, double r
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_CAMERA_RECORDING_MOTION_RATE, rate,
-					  NULL);
+		MMCAM_CAMERA_RECORDING_MOTION_RATE, rate,
+		NULL);
 
 	return  __convert_recorder_error_code(__func__, ret);
 }
@@ -1923,8 +1910,8 @@ int legacy_recorder_attr_get_recording_motion_rate(recorder_h recorder, double *
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_CAMERA_RECORDING_MOTION_RATE, rate,
-					  NULL);
+		MMCAM_CAMERA_RECORDING_MOTION_RATE, rate,
+		NULL);
 
 	return  __convert_recorder_error_code(__func__, ret);
 }
@@ -1956,8 +1943,8 @@ int legacy_recorder_attr_get_audio_channel(recorder_h recorder, int *channel_cou
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_AUDIO_CHANNEL, channel_count,
-					  NULL);
+		MMCAM_AUDIO_CHANNEL, channel_count,
+		NULL);
 
 	return  __convert_recorder_error_code(__func__, ret);
 }
@@ -1982,9 +1969,9 @@ int legacy_recorder_attr_set_orientation_tag(recorder_h recorder, recorder_rotat
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_RECORDER_TAG_ENABLE, true,
-					  MMCAM_TAG_VIDEO_ORIENTATION, orientation,
-					  NULL);
+		MMCAM_RECORDER_TAG_ENABLE, true,
+		MMCAM_TAG_VIDEO_ORIENTATION, orientation,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -2009,8 +1996,8 @@ int  legacy_recorder_attr_get_orientation_tag(recorder_h recorder, recorder_rota
 	}
 
 	ret = mm_camcorder_get_attributes(handle->mm_handle, NULL,
-					  MMCAM_TAG_VIDEO_ORIENTATION, orientation,
-					  NULL);
+		MMCAM_TAG_VIDEO_ORIENTATION, orientation,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
@@ -2039,8 +2026,8 @@ int legacy_recorder_attr_set_root_directory(recorder_h recorder,  const char *ro
 	}
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-					  MMCAM_ROOT_DIRECTORY, root_directory, strlen(root_directory),
-					  NULL);
+		MMCAM_ROOT_DIRECTORY, root_directory, strlen(root_directory),
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }
