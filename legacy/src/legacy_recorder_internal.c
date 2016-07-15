@@ -40,8 +40,8 @@ int legacy_recorder_set_client_pid(recorder_h recorder, int pid)
 	LOGD("pid %d", pid);
 
 	ret = mm_camcorder_set_attributes(handle->mm_handle, NULL,
-	                                  MMCAM_PID_FOR_SOUND_FOCUS, pid,
-	                                  NULL);
+		MMCAM_PID_FOR_SOUND_FOCUS, pid,
+		NULL);
 
 	return __convert_recorder_error_code(__func__, ret);
 }

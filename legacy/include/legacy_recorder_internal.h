@@ -47,5 +47,5 @@ int legacy_recorder_set_client_pid(recorder_h recorder, int pid);
 }
 #endif
 
-#endif //__TIZEN_MULTIMEDIA_LEGACY_RECORDER_INTERNAL_H__
+#endif /* __TIZEN_MULTIMEDIA_LEGACY_RECORDER_INTERNAL_H__ */
 

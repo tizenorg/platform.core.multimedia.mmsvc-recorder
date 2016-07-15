@@ -166,7 +166,7 @@ typedef const char* STRING;
  * @param[out] ret The delivered return value from the module to proxy side.
  */
 #define muse_recorder_msg_send(api, fd, cb_info, ret) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, 0); \
@@ -177,7 +177,7 @@ typedef const char* STRING;
 		} else \
 			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 
 /**
@@ -190,13 +190,13 @@ typedef const char* STRING;
  * @param[in] param A single parameter to be included in the message.
  */
 #define muse_recorder_msg_send1(api, fd, cb_info, ret, type, param) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_##type, #param, __value__, \
-				0); \
+			MUSE_TYPE_##type, #param, __value__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
@@ -204,7 +204,7 @@ typedef const char* STRING;
 		} else \
 			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Send the message from proxy to module via ipc, adding 1 more parameter.
@@ -215,19 +215,19 @@ typedef const char* STRING;
  * @param[in] param A single parameter to be included in the message.
  */
 #define muse_recorder_msg_send1_no_return(api, fd, cb_info, type, param) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_##type, #param, __value__, \
-				0); \
+			MUSE_TYPE_##type, #param, __value__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Send the message from proxy to module via ipc, adding 2 more parameters.
@@ -241,15 +241,15 @@ typedef const char* STRING;
  * @param[in] param2 The 2nd parameter to be included in the message.
  */
 #define muse_recorder_msg_send2(api, fd, cb_info, ret, type1, param1, type2, param2) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				0); \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
@@ -257,7 +257,7 @@ typedef const char* STRING;
 		} else \
 			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 
 /**
@@ -271,17 +271,17 @@ typedef const char* STRING;
  * @param[in] datum_size The size of the array.
  */
 #define muse_recorder_msg_send_array(api, fd, cb_info, ret, param, length, datum_size) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		int *__value__ = (int *)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, #length, length, \
-				MUSE_TYPE_ARRAY, #param, \
-					datum_size == sizeof(int)? length :  \
-					length / sizeof(int) + (length % sizeof(int)?1:0), \
-					__value__, \
-				0); \
+			MUSE_TYPE_INT, #length, length, \
+			MUSE_TYPE_ARRAY, #param, \
+			datum_size == sizeof(int) ? length :  \
+			length / sizeof(int) + (length % sizeof(int) ? 1 : 0), \
+			__value__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(fd, __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
@@ -289,7 +289,7 @@ typedef const char* STRING;
 		} else \
 			ret = client_wait_for_cb_return(api, cb_info, RECORDER_CALLBACK_TIME_OUT); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the ack message from the server to client side.
@@ -299,20 +299,20 @@ typedef const char* STRING;
  * @param[in] module The module info for the ipc transportation.
  */
 #define muse_recorder_msg_return(api, class, ret, module) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
-				MUSE_TYPE_INT, PARAM_RET, ret, \
-				0); \
+			MUSE_TYPE_INT, PARAM_API_CLASS, class, \
+			MUSE_TYPE_INT, PARAM_RET, ret, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the ack message from the server to client side.
@@ -324,22 +324,22 @@ typedef const char* STRING;
  * @param[in] param A parameter to be included in the message.
  */
 #define muse_recorder_msg_return1(api, class, ret, module, type, param) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
-				MUSE_TYPE_INT, PARAM_RET, ret, \
-				MUSE_TYPE_##type, #param, __value__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_API_CLASS, class, \
+			MUSE_TYPE_INT, PARAM_RET, ret, \
+			MUSE_TYPE_##type, #param, __value__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the ack message from the server to client side, adding 2 parameters.
@@ -353,24 +353,24 @@ typedef const char* STRING;
  * @param[in] param2 The 2nd parameter to be included in the message.
  */
 #define muse_recorder_msg_return2(api, class, ret, module, type1, param1, type2, param2) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
-				MUSE_TYPE_INT, PARAM_RET, ret, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_API_CLASS, class, \
+			MUSE_TYPE_INT, PARAM_RET, ret, \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the ack message from the server to client side, adding 3 parameters.
@@ -386,26 +386,26 @@ typedef const char* STRING;
  * @param[in] param3 The 3rd parameter to be included in the message.
  */
 #define muse_recorder_msg_return3(api, class, ret, module, type1, param1, type2, param2, type3, param3) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		type3 __value3__ = (type3)param3; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
-				MUSE_TYPE_INT, PARAM_RET, ret, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				MUSE_TYPE_##type3, #param3, __value3__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_API_CLASS, class, \
+			MUSE_TYPE_INT, PARAM_RET, ret, \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			MUSE_TYPE_##type3, #param3, __value3__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the ack message from the server to client side, adding array parameter.
@@ -418,26 +418,26 @@ typedef const char* STRING;
  * @param[in] datum_size The size of the array.
  */
 #define muse_recorder_msg_return_array(api, class, ret, module, param, length, datum_size) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		int __len__; \
 		int *__value__ = (int *)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_API_CLASS, class, \
-				MUSE_TYPE_INT, PARAM_RET, ret, \
-				MUSE_TYPE_INT, #length, length, \
-				MUSE_TYPE_ARRAY, #param, \
-					datum_size == sizeof(int)? length :  \
-					length / sizeof(int) + (length % sizeof(int)?1:0), \
-					__value__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_API_CLASS, class, \
+			MUSE_TYPE_INT, PARAM_RET, ret, \
+			MUSE_TYPE_INT, #length, length, \
+			MUSE_TYPE_ARRAY, #param, \
+			datum_size == sizeof(int) ? length :  \
+			length / sizeof(int) + (length % sizeof(int) ? 1 : 0), \
+			__value__, \
+			0); \
 		__len__ = muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		if (__len__ <= 0) { \
 			LOGE("sending message failed"); \
 			ret = RECORDER_ERROR_INVALID_OPERATION; \
 		} \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the event ack message from the server to client side.
@@ -447,15 +447,15 @@ typedef const char* STRING;
  * @param[in] module The module info for the ipc transportation.
  */
 #define muse_recorder_msg_event(api, event, class, module) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_EVENT, event, \
-				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
-				0); \
+			MUSE_TYPE_INT, PARAM_EVENT, event, \
+			MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
+			0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the event ack message from the server to client side, adding a parameter.
@@ -467,17 +467,17 @@ typedef const char* STRING;
  * @param[in] param A parameter to be included in the message.
  */
 #define muse_recorder_msg_event1(api, event, class, module, type, param) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		type __value__ = (type)param; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_EVENT, event, \
-				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
-				MUSE_TYPE_##type, #param, __value__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_EVENT, event, \
+			MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
+			MUSE_TYPE_##type, #param, __value__, \
+			0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the event ack message from the server to client side, adding 2 parameters.
@@ -490,19 +490,19 @@ typedef const char* STRING;
  * @param[in] param2 The 2nd parameter to be included in the message.
  */
 #define muse_recorder_msg_event2(api, event, class, module, type1, param1, type2, param2) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_EVENT, event, \
-				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_EVENT, event, \
+			MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the event ack message from the server to client side, adding 3 parameters.
@@ -517,21 +517,21 @@ typedef const char* STRING;
  * @param[in] param3 The 3rd parameter to be included in the message.
  */
 #define muse_recorder_msg_event3(api, event, class, module, type1, param1, type2, param2, type3, param3) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
 		type3 __value3__ = (type3)param3; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_EVENT, event, \
-				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				MUSE_TYPE_##type3, #param3, __value3__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_EVENT, event, \
+			MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			MUSE_TYPE_##type3, #param3, __value3__, \
+			0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 /**
  * @brief Returning the event ack message from the server to client side, adding 5 parameters.
@@ -550,7 +550,7 @@ typedef const char* STRING;
  * @param[in] param5 The 5th parameter to be included in the message.
  */
 #define muse_recorder_msg_event5(api, event, class, module, type1, param1, type2, param2, type3, param3, type4, param4, type5, param5) \
-	do{	\
+	do {	\
 		char *__sndMsg__; \
 		type1 __value1__ = (type1)param1; \
 		type2 __value2__ = (type2)param2; \
@@ -558,17 +558,17 @@ typedef const char* STRING;
 		type4 __value4__ = (type4)param4; \
 		type5 __value5__ = (type5)param5; \
 		__sndMsg__ = muse_core_msg_json_factory_new(api, \
-				MUSE_TYPE_INT, PARAM_EVENT, event, \
-				MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
-				MUSE_TYPE_##type1, #param1, __value1__, \
-				MUSE_TYPE_##type2, #param2, __value2__, \
-				MUSE_TYPE_##type3, #param3, __value3__, \
-				MUSE_TYPE_##type4, #param4, __value4__, \
-				MUSE_TYPE_##type5, #param5, __value5__, \
-				0); \
+			MUSE_TYPE_INT, PARAM_EVENT, event, \
+			MUSE_TYPE_INT, PARAM_EVENT_CLASS, class, \
+			MUSE_TYPE_##type1, #param1, __value1__, \
+			MUSE_TYPE_##type2, #param2, __value2__, \
+			MUSE_TYPE_##type3, #param3, __value3__, \
+			MUSE_TYPE_##type4, #param4, __value4__, \
+			MUSE_TYPE_##type5, #param5, __value5__, \
+			0); \
 		muse_core_ipc_send_msg(muse_core_client_get_msg_fd(module), __sndMsg__); \
 		muse_core_msg_json_factory_free(__sndMsg__); \
-	}while(0)
+	} while (0)
 
 #ifdef __cplusplus
 }
