@@ -25,9 +25,9 @@
 extern "C" {
 #endif
 
-typedef union _mediaSource{
+typedef union _mediaSource {
 	camera_h camera;
-}mediasource;
+} mediasource;
 
 
 typedef enum {
@@ -38,19 +38,19 @@ typedef enum {
 	_RECORDER_EVENT_TYPE_AUDIO_STREAM,
 	_RECORDER_EVENT_TYPE_ERROR,
 	_RECORDER_EVENT_TYPE_NUM
-}_recorder_event_e;
+} _recorder_event_e;
 
 typedef enum {
 	_RECORDER_TYPE_AUDIO = 0,
 	_RECORDER_TYPE_VIDEO
-}_recorder_type_e;
+} _recorder_type_e;
 
 typedef enum {
 	_RECORDER_SOURCE_TYPE_UNKNOWN,
 	_RECORDER_SOURCE_TYPE_CAMERA,
-}_recorder_source_type_e;
+} _recorder_source_type_e;
 
-typedef struct _recorder_s{
+typedef struct _recorder_s {
 	MMHandleType mm_handle;
 	mediasource mm_source;
 	void* user_cb[_RECORDER_EVENT_TYPE_NUM];
@@ -69,6 +69,6 @@ int __convert_recorder_error_code(const char *func, int code);
 }
 #endif
 
-#endif //__TIZEN_MULTIMEDIA_RECORDER_PRIVATE_H__
+#endif /* __TIZEN_MULTIMEDIA_RECORDER_PRIVATE_H__ */
 
 

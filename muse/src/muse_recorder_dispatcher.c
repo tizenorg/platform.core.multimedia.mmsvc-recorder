@@ -68,10 +68,10 @@ void _recorder_disp_recording_limit_reached_cb(recorder_recording_limit_type_e t
 	}
 
 	muse_recorder_msg_event1(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_RECORDING_LIMITED,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
-	                         module,
-	                         INT, type);
+		MUSE_RECORDER_EVENT_TYPE_RECORDING_LIMITED,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+		module,
+		INT, type);
 
 	return;
 }
@@ -88,11 +88,11 @@ void _recorder_disp_recording_status_cb(unsigned long long elapsed_time, unsigne
 	}
 
 	muse_recorder_msg_event2(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_RECORDING_STATUS,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
-	                         module,
-	                         INT64, cb_elapsed_time,
-	                         INT64, cb_file_size);
+		MUSE_RECORDER_EVENT_TYPE_RECORDING_STATUS,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+		module,
+		INT64, cb_elapsed_time,
+		INT64, cb_file_size);
 
 	return;
 }
@@ -107,12 +107,12 @@ void _recorder_disp_state_changed_cb(recorder_state_e previous, recorder_state_e
 	}
 
 	muse_recorder_msg_event3(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_STATE_CHANGE,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
-	                         module,
-	                         INT, previous,
-	                         INT, current,
-	                         INT, by_policy);
+		MUSE_RECORDER_EVENT_TYPE_STATE_CHANGE,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+		module,
+		INT, previous,
+		INT, current,
+		INT, by_policy);
 
 	return;
 }
@@ -127,12 +127,12 @@ void _recorder_disp_interrupted_cb(recorder_policy_e policy, recorder_state_e pr
 	}
 
 	muse_recorder_msg_event3(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_INTERRUPTED,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
-	                         module,
-	                         INT, policy,
-	                         INT, previous,
-	                         INT, current);
+		MUSE_RECORDER_EVENT_TYPE_INTERRUPTED,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+		module,
+		INT, policy,
+		INT, previous,
+		INT, current);
 
 	return;
 }
@@ -147,11 +147,11 @@ void _recorder_disp_error_cb(recorder_error_e error, recorder_state_e current_st
 	}
 
 	muse_recorder_msg_event2(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_ERROR,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
-	                         module,
-	                         INT, error,
-	                         INT, current_state);
+		MUSE_RECORDER_EVENT_TYPE_ERROR,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_MAIN,
+		module,
+		INT, error,
+		INT, current_state);
 
 	return;
 }
@@ -207,7 +207,7 @@ void _recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_type_e 
 	tbm_bo_unmap(bo);
 
 	tbm_key = tbm_bo_export(bo);
-	if(tbm_key == 0) {
+	if (tbm_key == 0) {
 		LOGE("Create key_info ERROR!!");
 		tbm_bo_unref(bo);
 		bo = NULL;
@@ -227,14 +227,14 @@ void _recorder_disp_audio_stream_cb(void* stream, int size, audio_sample_type_e 
 
 	/* send message */
 	muse_recorder_msg_event5(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_AUDIO_STREAM,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
-	                         module,
-	                         INT, size,
-	                         INT, format,
-	                         INT, channel,
-	                         INT, timestamp,
-	                         INT, tbm_key);
+		MUSE_RECORDER_EVENT_TYPE_AUDIO_STREAM,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+		module,
+		INT, size,
+		INT, format,
+		INT, channel,
+		INT, timestamp,
+		INT, tbm_key);
 
 	return;
 }
@@ -249,11 +249,11 @@ void _recorder_disp_foreach_supported_video_resolution_cb(int width, int height,
 	}
 
 	muse_recorder_msg_event2(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_VIDEO_RESOLUTION,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
-	                         module,
-	                         INT, width,
-	                         INT, height);
+		MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_VIDEO_RESOLUTION,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+		module,
+		INT, width,
+		INT, height);
 
 	return;
 }
@@ -268,10 +268,10 @@ void _recorder_disp_foreach_supported_file_format_cb(recorder_file_format_e form
 	}
 
 	muse_recorder_msg_event1(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_FILE_FORMAT,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
-	                         module,
-	                         INT, format);
+		MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_FILE_FORMAT,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+		module,
+		INT, format);
 
 	return;
 }
@@ -286,10 +286,10 @@ void _recorder_disp_foreach_supported_audio_encoder_cb(recorder_audio_codec_e co
 	}
 
 	muse_recorder_msg_event1(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_AUDIO_ENCODER,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
-	                         module,
-	                         INT, codec);
+		MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_AUDIO_ENCODER,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+		module,
+		INT, codec);
 
 	return;
 }
@@ -304,10 +304,10 @@ void _recorder_disp_foreach_supported_video_encoder_cb(recorder_video_codec_e co
 	}
 
 	muse_recorder_msg_event1(MUSE_RECORDER_CB_EVENT,
-	                         MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_VIDEO_ENCODER,
-	                         MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
-	                         module,
-	                         INT, codec);
+		MUSE_RECORDER_EVENT_TYPE_FOREACH_SUPPORTED_VIDEO_ENCODER,
+		MUSE_RECORDER_EVENT_CLASS_THREAD_SUB,
+		module,
+		INT, codec);
 
 	return;
 }
@@ -718,8 +718,8 @@ int recorder_dispatcher_get_video_resolution(muse_module_h module)
 	ret = legacy_recorder_get_video_resolution(muse_recorder->recorder_handle, &get_width, &get_height);
 
 	muse_recorder_msg_return2(api, class, ret, module,
-	                          INT, get_width,
-	                          INT, get_height);
+		INT, get_width,
+		INT, get_height);
 
 	return MUSE_RECORDER_ERROR_NONE;
 }
@@ -740,8 +740,8 @@ int recorder_dispatcher_foreach_supported_video_resolution(muse_module_h module)
 	}
 
 	ret = legacy_recorder_foreach_supported_video_resolution(muse_recorder->recorder_handle,
-	                                                         (recorder_supported_video_resolution_cb)_recorder_disp_foreach_supported_video_resolution_cb,
-	                                                         (void *)module);
+		(recorder_supported_video_resolution_cb)_recorder_disp_foreach_supported_video_resolution_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -891,8 +891,8 @@ int recorder_dispatcher_set_state_changed_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_state_changed_cb(muse_recorder->recorder_handle,
-	                                           (recorder_state_changed_cb)_recorder_disp_state_changed_cb,
-	                                           (void *)module);
+		(recorder_state_changed_cb)_recorder_disp_state_changed_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -937,8 +937,8 @@ int recorder_dispatcher_set_interrupted_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_interrupted_cb(muse_recorder->recorder_handle,
-	                                         (recorder_interrupted_cb)_recorder_disp_interrupted_cb,
-	                                         (void *)module);
+		(recorder_interrupted_cb)_recorder_disp_interrupted_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -983,8 +983,8 @@ int recorder_dispatcher_set_audio_stream_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_audio_stream_cb(muse_recorder->recorder_handle,
-	                                          (recorder_audio_stream_cb)_recorder_disp_audio_stream_cb,
-	                                          (void *)module);
+		(recorder_audio_stream_cb)_recorder_disp_audio_stream_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -1029,8 +1029,8 @@ int recorder_dispatcher_set_error_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_error_cb(muse_recorder->recorder_handle,
-	                                   (recorder_error_cb)_recorder_disp_error_cb,
-	                                   (void *)module);
+		(recorder_error_cb)_recorder_disp_error_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -1075,8 +1075,8 @@ int recorder_dispatcher_set_recording_status_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_recording_status_cb(muse_recorder->recorder_handle,
-	                                              (recorder_recording_status_cb)_recorder_disp_recording_status_cb,
-	                                              (void *)module);
+		(recorder_recording_status_cb)_recorder_disp_recording_status_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -1121,8 +1121,9 @@ int recorder_dispatcher_set_recording_limit_reached_cb(muse_module_h module)
 	}
 
 	ret = legacy_recorder_set_recording_limit_reached_cb(muse_recorder->recorder_handle,
-	                                                     (recorder_recording_limit_reached_cb)_recorder_disp_recording_limit_reached_cb,
-	                                                     (void *)module);
+		(recorder_recording_limit_reached_cb)_recorder_disp_recording_limit_reached_cb,
+		(void *)module);
+
 	muse_recorder_msg_return(api, class, ret, module);
 
 	return MUSE_RECORDER_ERROR_NONE;
@@ -1166,8 +1167,8 @@ int recorder_dispatcher_foreach_supported_file_format(muse_module_h module)
 	}
 
 	ret = legacy_recorder_foreach_supported_file_format(muse_recorder->recorder_handle,
-	                                                    (recorder_supported_file_format_cb)_recorder_disp_foreach_supported_file_format_cb,
-	                                                    (void *)module);
+		(recorder_supported_file_format_cb)_recorder_disp_foreach_supported_file_format_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -1574,8 +1575,8 @@ int recorder_dispatcher_foreach_supported_audio_encoder(muse_module_h module)
 	}
 
 	ret = legacy_recorder_foreach_supported_audio_encoder(muse_recorder->recorder_handle,
-	                                                      (recorder_supported_audio_encoder_cb)_recorder_disp_foreach_supported_audio_encoder_cb,
-	                                                      (void *)module);
+		(recorder_supported_audio_encoder_cb)_recorder_disp_foreach_supported_audio_encoder_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
@@ -1598,8 +1599,8 @@ int recorder_dispatcher_foreach_supported_video_encoder(muse_module_h module)
 	}
 
 	ret = legacy_recorder_foreach_supported_video_encoder(muse_recorder->recorder_handle,
-	                                                      (recorder_supported_video_encoder_cb)_recorder_disp_foreach_supported_video_encoder_cb,
-	                                                      (void *)module);
+		(recorder_supported_video_encoder_cb)_recorder_disp_foreach_supported_video_encoder_cb,
+		(void *)module);
 
 	muse_recorder_msg_return(api, class, ret, module);
 
