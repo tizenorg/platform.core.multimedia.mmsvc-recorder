@@ -238,6 +238,7 @@ static int __mm_recorder_msg_cb(int message, void *param, void *user_data)
 	case MM_MESSAGE_CAMCORDER_STATE_CHANGED:
 	case MM_MESSAGE_CAMCORDER_STATE_CHANGED_BY_ASM:
 	case MM_MESSAGE_CAMCORDER_STATE_CHANGED_BY_SECURITY:
+	case MM_MESSAGE_CAMCORDER_STATE_CHANGED_BY_RM:
 		previous_state = handle->state;
 		handle->state = __recorder_state_convert(m->state.current);
 		recorder_policy_e policy = RECORDER_POLICY_NONE;
@@ -261,6 +262,9 @@ static int __mm_recorder_msg_cb(int message, void *param, void *user_data)
 		} else if (message == MM_MESSAGE_CAMCORDER_STATE_CHANGED_BY_SECURITY) {
 			policy = RECORDER_POLICY_SECURITY;
 			LOGE("RECORDER_POLICY_SECURITY");
+		} else if (message == MM_MESSAGE_CAMCORDER_STATE_CHANGED_BY_RM) {
+			policy = RECORDER_POLICY_RESOURCE_CONFLICT;
+			LOGW("RECORDER_POLICY_RESOURCE_CONFLICT");
 		}
 
 		if (previous_state != handle->state && handle->user_cb[_RECORDER_EVENT_TYPE_STATE_CHANGE])

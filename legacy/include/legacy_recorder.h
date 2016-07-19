@@ -149,11 +149,12 @@ typedef enum {
  * @since_tizen @if MOBILE 2.3 @elseif WEARABLE 2.3.1 @endif
  */
 typedef enum {
-	RECORDER_POLICY_NONE = 0,       /**< None */
-	RECORDER_POLICY_SOUND,          /**< Sound policy */
-	RECORDER_POLICY_SOUND_BY_CALL,  /**< Sound policy by CALL */
-	RECORDER_POLICY_SOUND_BY_ALARM, /**< Sound policy by ALARM */
-	RECORDER_POLICY_SECURITY        /**< Security policy */
+	RECORDER_POLICY_NONE = 0,               /**< None */
+	RECORDER_POLICY_SOUND,                  /**< Sound policy (Deprecated since 3.0) */
+	RECORDER_POLICY_SOUND_BY_CALL,          /**< Sound policy by CALL (Deprecated since 3.0) */
+	RECORDER_POLICY_SOUND_BY_ALARM,         /**< Sound policy by ALARM (Deprecated since 3.0) */
+	RECORDER_POLICY_SECURITY,               /**< Security policy */
+	RECORDER_POLICY_RESOURCE_CONFLICT       /**< Resource conflict (Since 3.0) */
 } recorder_policy_e;
 
 /**
