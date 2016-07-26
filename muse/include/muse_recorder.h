@@ -166,11 +166,6 @@ typedef enum {
  */
 #define MUSE_RECORDER_MSG_MAX_LENGTH		512
 
-/**
- * @brief Definition for the wait time of the ipc callback.
- */
-#define RECORDER_CALLBACK_TIME_OUT			3
-
 
 #ifdef __cplusplus
 }
